@@ -392,7 +392,7 @@ function App() {
   });
   
   // Update check
-  const [appVersion, setAppVersion] = useState("1.0.2");
+  const [appVersion, setAppVersion] = useState("1.0.3");
   const [updateInfo, setUpdateInfo] = useState<UpdateInfo | null>(null);
   const [isCheckingUpdate, setIsCheckingUpdate] = useState(false);
   const [showUpdateDialog, setShowUpdateDialog] = useState(false);
@@ -1021,6 +1021,22 @@ function App() {
     // Output device setting will be handled in the audio capture
   }
 
+  // Helper function to compare semantic versions
+  function compareVersions(v1: string, v2: string): number {
+    const parts1 = v1.replace('v', '').split('.').map(Number);
+    const parts2 = v2.replace('v', '').split('.').map(Number);
+    
+    for (let i = 0; i < Math.max(parts1.length, parts2.length); i++) {
+      const num1 = parts1[i] || 0;
+      const num2 = parts2[i] || 0;
+      
+      if (num1 > num2) return 1;
+      if (num1 < num2) return -1;
+    }
+    
+    return 0;
+  }
+
   async function checkForUpdates(silent = false) {
     if (!silent) setIsCheckingUpdate(true);
     
@@ -1048,10 +1064,11 @@ function App() {
       logger.log('Update info received:', data);
       logger.log('Changelog from API:', data.changelog);
       
-      // Compare versions manually
+      // Compare versions properly
       const currentVersion = appVersion;
       const latestVersion = data.current_version;
-      const updateAvailable = latestVersion !== currentVersion;
+      const versionComparison = compareVersions(latestVersion, currentVersion);
+      const updateAvailable = versionComparison > 0; // Only true if latest > current
       const isSupported = true; // Assuming all versions are supported
       
       const updateInfo: UpdateInfo = {

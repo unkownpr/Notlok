@@ -467,17 +467,7 @@ p {
     color: #81c784;
   }
 
-  :root:not([data-theme="light"]) .update-versions {
-    background: #2a2a2a;
-  }
-
-  :root:not([data-theme="light"]) .update-version-row span {
-    color: #888;
-  }
-
-  :root:not([data-theme="light"]) .update-version-row strong {
-    color: #fff;
-  }
+  /* update-versions now uses CSS variables - no override needed */
 
   :root:not([data-theme="light"]) .update-changelog {
     background: #2a2a2a;
@@ -579,7 +569,8 @@ p {
   gap: 0.75rem;
   margin-bottom: 1.5rem;
   padding: 1rem;
-  background: #f5f5f7;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
   border-radius: 12px;
 }
 
@@ -591,19 +582,17 @@ p {
 }
 
 .update-version-row span {
-  color: #666;
+  color: var(--text-secondary);
 }
 
 .update-version-row strong {
-  color: #000;
+  color: var(--text-color);
   font-size: 1rem;
 }
 
 .update-version-row .highlight {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--primary-color);
+  font-weight: 700;
 }
 
 .update-message {
@@ -1693,17 +1682,7 @@ textarea:focus {
   color: #81c784;
 }
 
-:root[data-theme="dark"] .update-versions {
-  background: #2a2a2a;
-}
-
-:root[data-theme="dark"] .update-version-row span {
-  color: #888;
-}
-
-:root[data-theme="dark"] .update-version-row strong {
-  color: #fff;
-}
+/* update-versions now uses CSS variables - no dark mode override needed */
 
 :root[data-theme="dark"] .update-message {
   background: #1a2a3a;
