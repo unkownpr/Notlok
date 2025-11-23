@@ -1,0 +1,1748 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <!-- Essential Meta Tags -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    
+    <!-- Primary Meta Tags -->
+    <title>Notlok (Beta) - AI Destekli Sesli Not Uygulaması | Yerel Transkripsiyon Yazılımı</title>
+    <meta name="title" content="Notlok (Beta) - AI Destekli Sesli Not Uygulaması | Yerel Transkripsiyon Yazılımı">
+    <meta name="description" content="Notlok ile sesli notlarınızı otomatik olarak kaydedin ve AI ile transkript oluşturun. BlackHole gerektirmeden sistem sesini yakalayın. Tamamen yerel, güvenli ve özel. macOS ve Windows için. Şu anda Beta aşamasında.">
+    <meta name="keywords" content="sesli not, transkripsiyon yazılımı, AI transkripsiyon, voice note app, whisper ai, yerel transkripsiyon, sistem ses kaydı, ses kaydı, AI rapor, macOS ses kaydı, Windows ses kaydı, offline transkripsiyon">
+    <meta name="author" content="ssilistre.dev">
+    <meta name="robots" content="index, follow">
+    <meta name="language" content="Turkish, English">
+    <meta name="revisit-after" content="7 days">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://notlok.app/">
+    <meta property="og:title" content="Notlok - AI Destekli Sesli Not Uygulaması | Yerel Transkripsiyon">
+    <meta property="og:description" content="Sesli notlarınızı otomatik kaydedin ve AI ile transkript oluşturun. BlackHole gerektirmeden sistem sesini yakalayın. Tamamen yerel ve güvenli.">
+    <meta property="og:image" content="https://notlok.app/logo.png">
+    <meta property="og:locale" content="tr_TR">
+    <meta property="og:locale:alternate" content="en_US">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://notlok.app/">
+    <meta property="twitter:title" content="Notlok - AI Destekli Sesli Not Uygulaması">
+    <meta property="twitter:description" content="AI destekli sesli not ve transkripsiyon yazılımı. Tamamen yerel, güvenli ve özel.">
+    <meta property="twitter:image" content="https://notlok.app/logo.png">
+    <meta name="twitter:creator" content="@ssilistre">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://notlok.app/">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="apple-touch-icon" href="favicon.png">
+    
+    <!-- Preconnect for Performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <!-- Schema.org Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "Notlok",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "macOS 10.15+, Windows 10+",
+      "offers": {
+        "@type": "Offer",
+        "price": "TBD",
+        "priceCurrency": "USD"
+      },
+      "description": "AI destekli sesli not uygulaması. Sesli notlarınızı otomatik kaydedin ve transkript oluşturun.",
+      "author": {
+        "@type": "Person",
+        "name": "ssilistre.dev",
+        "url": "https://ssilistre.dev"
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "5.0",
+        "ratingCount": "1"
+      },
+      "featureList": [
+        "Sistem ses yakalama (BlackHole gerektirmez)",
+        "AI Transkripsiyon (Whisper & Parakeet)",
+        "AI Rapor Oluşturma",
+        "Kayıt Geçmişi",
+        "Çoklu Dil Desteği (TR/EN)",
+        "Tema Desteği (Açık/Koyu)",
+        "Tamamen Yerel ve Güvenli"
+      ]
+    }
+    </script>
+    
+    <style>
+        /* Reset & Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary: #FFFFFF;
+            --primary-dark: #000000;
+            --secondary: #888888;
+            --accent: #0066FF;
+            --bg-dark: #121212;
+            --bg-darker: #0a0a0a;
+            --bg-card: #1a1a1a;
+            --bg-panel: #1e1e1e;
+            --text-white: #f0f0f0;
+            --text-gray: #888888;
+            --border: #333333;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --beta: #F59E0B;
+        }
+        
+        /* Light Mode */
+        :root[data-theme="light"] {
+            --primary: #000000;
+            --primary-dark: #FFFFFF;
+            --secondary: #666666;
+            --bg-dark: #FFFFFF;
+            --bg-darker: #F5F5F7;
+            --bg-card: #FFFFFF;
+            --bg-panel: #F5F5F7;
+            --text-white: #1D1D1F;
+            --text-gray: #666666;
+            --border: #D1D1D6;
+        }
+        
+        /* Light Mode Specific Overrides */
+        :root[data-theme="light"] header {
+            background: rgba(255, 255, 255, 0.8);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        
+        :root[data-theme="light"] header.scrolled {
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+        }
+        
+        :root[data-theme="light"] .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        
+        :root[data-theme="light"] .btn-primary:hover {
+            background: #333333;
+        }
+        
+        :root[data-theme="light"] .btn-secondary {
+            background: transparent;
+            color: var(--primary);
+            border-color: var(--border);
+        }
+        
+        :root[data-theme="light"] .btn-secondary:hover {
+            background: var(--bg-panel);
+        }
+        
+        :root[data-theme="light"] .feature-card {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        :root[data-theme="light"] .feature-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        :root[data-theme="light"] .platform-badge {
+            background: white;
+            border: 1px solid var(--border);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        :root[data-theme="light"] .hero::before {
+            background: radial-gradient(circle, rgba(0, 0, 0, 0.03) 0%, transparent 70%);
+        }
+        
+        :root[data-theme="light"] .hero-beta-notice {
+            background: rgba(245, 158, 11, 0.1);
+            color: #D97706;
+            border-color: #F59E0B;
+        }
+        
+        :root[data-theme="light"] .step {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        :root[data-theme="light"] .step:hover {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        :root[data-theme="light"] .pricing-card {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        :root[data-theme="light"] .faq-item {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        :root[data-theme="light"] .faq-item:hover .faq-question {
+            background: var(--bg-panel);
+        }
+        
+        :root[data-theme="light"] footer {
+            background: var(--bg-panel);
+            border-top: 1px solid var(--border);
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-white);
+            background: var(--bg-dark);
+            overflow-x: hidden;
+        }
+        
+        /* Typography */
+        h1, h2, h3, h4 {
+            font-weight: 600;
+            line-height: 1.2;
+            letter-spacing: -0.02em;
+        }
+        
+        h1 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            margin-bottom: 1.5rem;
+        }
+        
+        h2 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            margin-bottom: 1rem;
+        }
+        
+        h3 {
+            font-size: clamp(1.5rem, 3vw, 2rem);
+            margin-bottom: 0.75rem;
+        }
+        
+        p {
+            font-size: 1.125rem;
+            color: var(--text-gray);
+            line-height: 1.7;
+        }
+        
+        h2, h3, h4 {
+            color: var(--text-white);
+        }
+        
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+        
+        /* Header */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(18, 18, 18, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+        
+        header.scrolled {
+            background: rgba(18, 18, 18, 0.95);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.5);
+        }
+        
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-white);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            position: relative;
+        }
+        
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            object-fit: contain;
+        }
+        
+        .logo span {
+            font-size: 1.75rem;
+        }
+        
+        .beta-badge {
+            background: var(--beta);
+            color: white;
+            font-size: 0.6rem;
+            padding: 0.25rem 0.6rem;
+            border-radius: 4px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-left: 0.5rem;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+            align-items: center;
+        }
+        
+        .nav-links a {
+            color: var(--text-gray);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            font-size: 0.95rem;
+        }
+        
+        .nav-links a:hover {
+            color: var(--text-white);
+        }
+        
+        .theme-lang-group {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        
+        .theme-toggle,
+        .lang-toggle {
+            background: var(--bg-panel);
+            border: 1px solid var(--border);
+            color: var(--text-gray);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.85rem;
+            transition: all 0.15s ease;
+            font-family: inherit;
+        }
+        
+        .theme-toggle:hover,
+        .lang-toggle:hover {
+            background: var(--bg-card);
+            color: var(--text-white);
+            border-color: var(--text-gray);
+        }
+        
+        .theme-icon {
+            font-size: 1rem;
+        }
+        
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding-top: 80px;
+            background: var(--bg-darker);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.03) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            padding: 4rem 0;
+        }
+        
+        .hero-beta-notice {
+            background: rgba(245, 158, 11, 0.2);
+            border: 2px solid var(--beta);
+            color: var(--beta);
+            padding: 0.75rem 2rem;
+            border-radius: 50px;
+            display: inline-block;
+            margin-bottom: 2rem;
+            font-size: 0.9rem;
+            font-weight: 700;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.85; }
+        }
+        
+        .hero h1 {
+            color: var(--text-white);
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+        }
+        
+        .hero h1 + h1 {
+            margin-top: 0;
+        }
+        
+        .hero-subtitle {
+            font-size: 1.5rem;
+            color: var(--text-gray);
+            margin-bottom: 3rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.6;
+        }
+        
+        .hero-subtitle + .hero-subtitle {
+            margin-top: 0;
+        }
+        
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 3rem;
+        }
+        
+        .btn {
+            padding: 0.8rem 2rem;
+            font-size: 0.95rem;
+            font-weight: 600;
+            border-radius: 20px;
+            text-decoration: none;
+            transition: all 0.15s ease;
+            display: inline-block;
+            border: none;
+            cursor: pointer;
+            font-family: inherit;
+        }
+        
+        .btn-primary {
+            background: var(--text-white);
+            color: var(--bg-dark);
+            border: 1.5px solid var(--text-white);
+        }
+        
+        .btn-primary:hover {
+            background: var(--text-gray);
+            border-color: var(--text-gray);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-white);
+            border: 1.5px solid var(--border);
+        }
+        
+        .btn-secondary:hover {
+            background: var(--bg-card);
+            border-color: var(--text-gray);
+        }
+        
+        .platforms {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            align-items: center;
+            margin-top: 2rem;
+        }
+        
+        .platform-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            font-weight: 500;
+            font-size: 0.95rem;
+            color: var(--text-gray);
+        }
+        
+        /* Features Section */
+        .features {
+            padding: 8rem 0;
+            background: var(--bg-dark);
+        }
+        
+        .section-header {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 5rem;
+        }
+        
+        .section-header h2 {
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+        
+        .section-header p {
+            margin-bottom: 0;
+        }
+        
+        /* Ensure only one language shows at a time in headers */
+        .section-header .tr-only + .en-only,
+        .section-header .en-only + .tr-only {
+            margin-top: 0;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 3rem;
+            margin-top: 4rem;
+        }
+        
+        .feature-card {
+            background: var(--bg-card);
+            padding: 2rem;
+            border-radius: 16px;
+            transition: all 0.15s ease;
+            border: 1.5px solid var(--border);
+        }
+        
+        .feature-card:hover {
+            border-color: var(--text-gray);
+            background: var(--bg-panel);
+        }
+        
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            display: block;
+        }
+        
+        .feature-card h3 {
+            color: var(--text-white);
+            margin-bottom: 1rem;
+        }
+        
+        .feature-card p {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: var(--text-gray);
+        }
+        
+        /* How It Works */
+        .how-it-works {
+            padding: 8rem 0;
+            background: var(--bg-darker);
+        }
+        
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+            margin-top: 4rem;
+        }
+        
+        @media (max-width: 1024px) {
+            .steps {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 640px) {
+            .steps {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .step {
+            text-align: center;
+            position: relative;
+            padding: 2rem 1.5rem;
+            background: var(--bg-card);
+            border-radius: 16px;
+            border: 1.5px solid var(--border);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .step:hover {
+            border-color: var(--text-gray);
+            transform: translateY(-5px);
+        }
+        
+        .step-number {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--bg-panel) 0%, var(--bg-card) 100%);
+            color: var(--text-white);
+            border: 2px solid var(--border);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin: 0 auto 1rem;
+            position: relative;
+        }
+        
+        .step-number::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 2px solid var(--border);
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.1);
+                opacity: 0.5;
+            }
+        }
+        
+        .step-icon {
+            font-size: 2rem;
+            margin-bottom: 0.75rem;
+            display: block;
+        }
+        
+        .step h3 {
+            margin-bottom: 0.75rem;
+            color: var(--text-white);
+            font-size: 1.1rem;
+        }
+        
+        .step p {
+            color: var(--text-gray);
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }
+        
+        /* Pricing */
+        .pricing {
+            padding: 8rem 0;
+            background: var(--bg-dark);
+        }
+        
+        .pricing-card {
+            max-width: 500px;
+            margin: 3rem auto 0;
+            background: var(--bg-card);
+            padding: 3rem;
+            border-radius: 16px;
+            border: 1.5px solid var(--border);
+            text-align: center;
+            position: relative;
+        }
+        
+        .pricing-card h3 {
+            color: var(--text-white);
+        }
+        
+        .beta-pricing-badge {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            background: var(--beta);
+            color: white;
+            font-size: 0.65rem;
+            padding: 0.35rem 0.9rem;
+            border-radius: 20px;
+            font-weight: 700;
+            letter-spacing: 0.8px;
+        }
+        
+        .price {
+            font-size: 4rem;
+            font-weight: 700;
+            color: var(--text-white);
+            margin: 1rem 0;
+        }
+        
+        .price-period {
+            color: var(--text-gray);
+            font-size: 1.2rem;
+        }
+        
+        .features-list {
+            list-style: none;
+            margin: 2rem 0;
+            text-align: left;
+        }
+        
+        .features-list li {
+            padding: 0.75rem 0;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-gray);
+        }
+        
+        .features-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .check-icon {
+            color: var(--success);
+            font-size: 1.25rem;
+        }
+        
+        /* FAQ */
+        .faq {
+            padding: 8rem 0;
+            background: var(--bg-darker);
+        }
+        
+        .faq-list {
+            max-width: 800px;
+            margin: 3rem auto 0;
+        }
+        
+        .faq-item {
+            background: var(--bg-card);
+            margin-bottom: 0.75rem;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1.5px solid var(--border);
+        }
+        
+        .faq-question {
+            padding: 1.25rem 1.5rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: all 0.15s ease;
+            color: var(--text-white);
+        }
+        
+        .faq-question:hover {
+            background: var(--bg-panel);
+        }
+        
+        .faq-item.active {
+            border-color: var(--text-gray);
+        }
+        
+        .faq-answer p {
+            color: var(--text-gray);
+        }
+        
+        .faq-answer {
+            padding: 0 1.5rem;
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .faq-item.active .faq-answer {
+            max-height: 500px;
+            padding: 0 1.5rem 1.5rem;
+        }
+        
+        .faq-icon {
+            transition: transform 0.3s ease;
+        }
+        
+        .faq-item.active .faq-icon {
+            transform: rotate(180deg);
+        }
+        
+        /* Footer */
+        footer {
+            background: var(--bg-darker);
+            color: var(--text-white);
+            padding: 4rem 0 2rem;
+            border-top: 1px solid var(--border);
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+        
+        .footer-section h4 {
+            margin-bottom: 1.5rem;
+            font-size: 1.25rem;
+        }
+        
+        .footer-links {
+            list-style: none;
+        }
+        
+        .footer-links li {
+            margin-bottom: 0.75rem;
+        }
+        
+        .footer-links a {
+            color: var(--text-gray);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .footer-links a:hover {
+            color: var(--text-white);
+        }
+        
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+            color: var(--text-gray);
+        }
+        
+        /* Developer Badge Hover Effect */
+        .footer-section > div[style*="background: var(--bg-card)"]:hover {
+            border-color: var(--text-gray);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+        
+        :root[data-theme="light"] .footer-section > div[style*="background: var(--bg-card)"]:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Mobile Menu Toggle */
+        .mobile-menu-toggle {
+            display: none;
+            background: var(--bg-panel);
+            border: 1px solid var(--border);
+            color: var(--text-white);
+            padding: 0.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .mobile-menu-toggle {
+                display: block;
+            }
+            
+            .theme-lang-group {
+                display: flex !important;
+                gap: 0.5rem;
+            }
+            
+            .hero {
+                min-height: auto;
+                padding: 6rem 0;
+            }
+            
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 1.2rem;
+            }
+            
+            .cta-buttons {
+                flex-direction: column;
+            }
+            
+            .platforms {
+                flex-direction: column;
+            }
+            
+            .features-grid,
+            .steps {
+                grid-template-columns: 1fr;
+            }
+            
+            .features,
+            .how-it-works,
+            .pricing,
+            .faq {
+                padding: 4rem 0;
+            }
+        }
+        
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .fade-in-up {
+            animation: fadeInUp 0.8s ease-out;
+        }
+        
+        /* Language Toggle - Base Rule */
+        .tr-only,
+        .en-only {
+            display: none !important;
+            visibility: hidden !important;
+            opacity: 0 !important;
+            position: absolute !important;
+            pointer-events: none !important;
+        }
+        
+        /* Turkish Content - Show Only TR */
+        body[lang="tr"] .tr-only {
+            display: inline !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            position: static !important;
+            pointer-events: auto !important;
+        }
+        
+        body[lang="tr"] .tr-only.faq-item,
+        body[lang="tr"] .tr-only.feature-card,
+        body[lang="tr"] .tr-only.step,
+        body[lang="tr"] .tr-only.hero-beta-notice,
+        body[lang="tr"] div.tr-only,
+        body[lang="tr"] h1.tr-only,
+        body[lang="tr"] h2.tr-only,
+        body[lang="tr"] h3.tr-only,
+        body[lang="tr"] h4.tr-only,
+        body[lang="tr"] p.tr-only { 
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            position: static !important;
+            pointer-events: auto !important;
+        }
+        
+        /* Force Hide EN when TR is active */
+        body[lang="tr"] .en-only,
+        body[lang="tr"] .en-only * {
+            display: none !important;
+            visibility: hidden !important;
+            opacity: 0 !important;
+            position: absolute !important;
+            pointer-events: none !important;
+        }
+        
+        /* English Content - Show Only EN */
+        body[lang="en"] .en-only {
+            display: inline !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            position: static !important;
+            pointer-events: auto !important;
+        }
+        
+        body[lang="en"] .en-only.faq-item,
+        body[lang="en"] .en-only.feature-card,
+        body[lang="en"] .en-only.step,
+        body[lang="en"] .en-only.hero-beta-notice,
+        body[lang="en"] div.en-only,
+        body[lang="en"] h1.en-only,
+        body[lang="en"] h2.en-only,
+        body[lang="en"] h3.en-only,
+        body[lang="en"] h4.en-only,
+        body[lang="en"] p.en-only { 
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            position: static !important;
+            pointer-events: auto !important;
+        }
+        
+        /* Force Hide TR when EN is active */
+        body[lang="en"] .tr-only,
+        body[lang="en"] .tr-only * {
+            display: none !important;
+            visibility: hidden !important;
+            opacity: 0 !important;
+            position: absolute !important;
+            pointer-events: none !important;
+        }
+    </style>
+</head>
+<body lang="tr">
+    <!-- Header -->
+    <header id="header">
+        <nav>
+            <a href="#" class="logo">
+                <img src="logo.png" alt="Notlok Logo" class="logo-icon">
+                <span>Notlok</span>
+                <span class="beta-badge">BETA</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="#features" class="tr-only">Özellikler</a><a href="#features" class="en-only">Features</a></li>
+                <li><a href="#how-it-works" class="tr-only">Nasıl Çalışır</a><a href="#how-it-works" class="en-only">How It Works</a></li>
+                <li><a href="#pricing" class="tr-only">Fiyatlandırma</a><a href="#pricing" class="en-only">Pricing</a></li>
+                <li><a href="#faq" class="tr-only">S.S.S</a><a href="#faq" class="en-only">FAQ</a></li>
+                <li class="theme-lang-group">
+                    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Theme">
+                        <span class="theme-icon">🌓</span>
+                    </button>
+                    <button class="lang-toggle" onclick="toggleLanguage()">
+                        <span class="tr-only">EN</span>
+                        <span class="en-only">TR</span>
+                    </button>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content fade-in-up">
+                <div class="hero-beta-notice tr-only">
+                    🚀 Şu anda Beta Aşamasında - Özel Fiyatlardan Yararlanın
+                </div>
+                <div class="hero-beta-notice en-only">
+                    🚀 Currently in Beta - Take Advantage of Special Pricing
+                </div>
+                
+                <h1 class="tr-only">Sesli Notlarınızı<br>AI ile Yönetin</h1>
+                <h1 class="en-only">Manage Your Voice Notes<br>with AI</h1>
+                
+                <p class="hero-subtitle tr-only">
+                    AI destekli sesli not uygulaması ile otomatik kayıt, transkripsiyon ve raporlama. 
+                    Tamamen güvenli, verileriniz sadece cihazınızda kalır.
+                </p>
+                <p class="hero-subtitle en-only">
+                    AI-powered voice note app with automatic recording, transcription and reporting. 
+                    Completely secure, your data stays on your device only.
+                </p>
+                
+                <div class="cta-buttons">
+                    <a href="https://eshop.ssilistre.dev/buy/3f17aa6f-a896-442f-9aeb-5ea1e1dcabeb?embed=1&logo=0" class="btn btn-primary lemonsqueezy-button tr-only">Şimdi Satın Al</a>
+                    <a href="https://eshop.ssilistre.dev/buy/3f17aa6f-a896-442f-9aeb-5ea1e1dcabeb?embed=1&logo=0" class="btn btn-primary lemonsqueezy-button en-only">Buy Now</a>
+                    <a href="#how-it-works" class="btn btn-secondary tr-only">Nasıl Çalışır?</a>
+                    <a href="#how-it-works" class="btn btn-secondary en-only">How It Works?</a>
+                </div>
+                
+                <div class="platforms">
+                    <div class="platform-badge">
+                        <span>🍎</span>
+                        <span>macOS 10.15+</span>
+                    </div>
+                    <div class="platform-badge">
+                        <span>🪟</span>
+                        <span>Windows 10+</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="tr-only">Güçlü Özellikler</h2>
+                <h2 class="en-only">Powerful Features</h2>
+                <p class="tr-only">
+                    Notlok, sesli notlarınızı yönetmek için ihtiyacınız olan her şeyi sunar. 
+                    BlackHole gibi karmaşık araçlara ihtiyaç duymadan doğrudan sistem sesini yakalar.
+                </p>
+                <p class="en-only">
+                    Notlok offers everything you need to manage your voice notes. 
+                    Captures system audio directly without complex tools like BlackHole.
+                </p>
+            </div>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <span class="feature-icon">🎤</span>
+                    <h3 class="tr-only">Sistem Ses Yakalama</h3>
+                    <h3 class="en-only">System Audio Capture</h3>
+                    <p class="tr-only">
+                        BlackHole veya loopback device gerektirmez. macOS ScreenCaptureKit ile doğrudan sistem sesini yakalar.
+                    </p>
+                    <p class="en-only">
+                        No BlackHole or loopback device required. Captures system audio directly with macOS ScreenCaptureKit.
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <span class="feature-icon">🤖</span>
+                    <h3 class="tr-only">AI Transkripsiyon</h3>
+                    <h3 class="en-only">AI Transcription</h3>
+                    <p class="tr-only">
+                        Whisper ve Parakeet modelleri ile yerel transkripsiyon. İnternet bağlantısı gerektirmez, tamamen offline çalışır.
+                    </p>
+                    <p class="en-only">
+                        Local transcription with Whisper and Parakeet models. No internet required, works completely offline.
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <span class="feature-icon">📝</span>
+                    <h3 class="tr-only">AI Rapor Oluşturma</h3>
+                    <h3 class="en-only">AI Report Generation</h3>
+                    <p class="tr-only">
+                        Sesli not özetleri, aksiyon maddeleri ve karar günlükleri otomatik oluşturulur. Notlok AI veya Gemini AI desteği.
+                    </p>
+                    <p class="en-only">
+                        Automatically generates voice note summaries, action items and decision logs. Notlok AI or Gemini AI support.
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <span class="feature-icon">🔒</span>
+                    <h3 class="tr-only">Tamamen Güvenli</h3>
+                    <h3 class="en-only">Completely Secure</h3>
+                    <p class="tr-only">
+                        Tüm kayıtlar ve işlemler cihazınızda kalır. Verileriniz internet üzerinden paylaşılmaz. %100 gizlilik garantisi.
+                    </p>
+                    <p class="en-only">
+                        All recordings and processing stay on your device. Your data is never shared online. 100% privacy guaranteed.
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <span class="feature-icon">💾</span>
+                    <h3 class="tr-only">Kayıt Geçmişi</h3>
+                    <h3 class="en-only">Recording History</h3>
+                    <p class="tr-only">
+                        Tüm sesli notlarınız ve AI raporlarınız yerel olarak saklanır. İstediğiniz zaman erişin, düzenleyin veya silin.
+                    </p>
+                    <p class="en-only">
+                        All your voice notes and AI reports are stored locally. Access, edit or delete anytime you want.
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <span class="feature-icon">🌍</span>
+                    <h3 class="tr-only">Çoklu Dil</h3>
+                    <h3 class="en-only">Multi-Language</h3>
+                    <p class="tr-only">
+                        Türkçe ve İngilizce arayüz desteği. Transkripsiyon için otomatik dil algılama veya manuel seçim.
+                    </p>
+                    <p class="en-only">
+                        Turkish and English interface support. Automatic language detection or manual selection for transcription.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section id="how-it-works" class="how-it-works">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="tr-only">Nasıl Çalışır?</h2>
+                <h2 class="en-only">How It Works?</h2>
+                <p class="tr-only">Notlok'u kullanmaya başlamak çok kolay. Sadece 4 adımda sesli not uygulamanız hazır!</p>
+                <p class="en-only">Getting started with Notlok is very easy. Your voice note app ready in just 4 steps!</p>
+            </div>
+            
+            <div class="steps">
+                <div class="step tr-only">
+                    <span class="step-icon">📥</span>
+                    <div class="step-number">1</div>
+                    <h3>İndir ve Kur</h3>
+                    <p>
+                        macOS veya Windows için uygulamayı indirin. Kurulum 2 dakikadan kısa sürer.
+                        Sürükle-bırak ile hazır!
+                    </p>
+                </div>
+                <div class="step en-only">
+                    <span class="step-icon">📥</span>
+                    <div class="step-number">1</div>
+                    <h3>Download & Install</h3>
+                    <p>
+                        Download the app for macOS or Windows. Installation takes less than 2 minutes.
+                        Drag and drop, ready!
+                    </p>
+                </div>
+                
+                <div class="step tr-only">
+                    <span class="step-icon">🔑</span>
+                    <div class="step-number">2</div>
+                    <h3>Lisans Aktif Et</h3>
+                    <p>
+                        Email ve lisans anahtarınızı girin. Anında aktive olur ve kullanmaya başlarsınız.
+                        Tek seferlik işlem!
+                    </p>
+                </div>
+                <div class="step en-only">
+                    <span class="step-icon">🔑</span>
+                    <div class="step-number">2</div>
+                    <h3>Activate License</h3>
+                    <p>
+                        Enter your email and license key. Instantly activated and start using.
+                        One-time process!
+                    </p>
+                </div>
+                
+                <div class="step tr-only">
+                    <span class="step-icon">🤖</span>
+                    <div class="step-number">3</div>
+                    <h3>Model İndir</h3>
+                    <p>
+                        AI transkripsiyon için bir model seçin ve indirin. Whisper Base önerilir (142 MB).
+                        Tamamen offline çalışır!
+                    </p>
+                </div>
+                <div class="step en-only">
+                    <span class="step-icon">🤖</span>
+                    <div class="step-number">3</div>
+                    <h3>Download Model</h3>
+                    <p>
+                        Choose and download a model for AI transcription. Whisper Base recommended (142 MB).
+                        Works completely offline!
+                    </p>
+                </div>
+                
+                <div class="step tr-only">
+                    <span class="step-icon">🎙️</span>
+                    <div class="step-number">4</div>
+                    <h3>Kayda Başla</h3>
+                    <p>
+                        "Kayda Başla" butonuna tıklayın. Ses kaydınız bittikten sonra AI transkript ve rapor hazır!
+                        Hızlı ve kolay!
+                    </p>
+                </div>
+                <div class="step en-only">
+                    <span class="step-icon">🎙️</span>
+                    <div class="step-number">4</div>
+                    <h3>Start Recording</h3>
+                    <p>
+                        Click "Start Recording" button. AI transcript and report ready after your recording ends!
+                        Fast and easy!
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing -->
+    <section id="pricing" class="pricing">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="tr-only">Basit Fiyatlandırma</h2>
+                <h2 class="en-only">Simple Pricing</h2>
+                <p class="tr-only">
+                    Yıllık lisans ile tam özellikli Notlok'a erişin. Beta fiyatı ile avantajlı fırsat.
+                </p>
+                <p class="en-only">
+                    Access full-featured Notlok with annual license. Special beta pricing.
+                </p>
+            </div>
+            
+            <div class="pricing-card">
+                <div class="beta-pricing-badge tr-only">BETA FİYATI</div>
+                <div class="beta-pricing-badge en-only">BETA PRICING</div>
+                
+                <div class="price" style="margin: 2rem 0;">
+                    <span style="font-size: 4rem; font-weight: 700; color: var(--text-white);">100₺</span>
+                </div>
+                <p style="color: var(--warning); font-weight: 600; margin-bottom: 2rem; font-size: 0.95rem;">
+                    <span class="tr-only">⚡ Her satın alımda fiyat 10₺ artıyor!</span>
+                    <span class="en-only">⚡ Price increases 10₺ with each purchase!</span>
+                </p>
+                
+                <h3 class="tr-only">Notlok Yıllık Lisans</h3>
+                <h3 class="en-only">Notlok Annual License</h3>
+                
+                <ul class="features-list" style="margin-top: 2rem;">
+                    <li>
+                        <span class="check-icon">✓</span>
+                        <span class="tr-only">1 yıl tam erişim</span>
+                        <span class="en-only">1 year full access</span>
+                    </li>
+                    <li>
+                        <span class="check-icon">✓</span>
+                        <span class="tr-only">Tüm özellikler dahil</span>
+                        <span class="en-only">All features included</span>
+                    </li>
+                    <li>
+                        <span class="check-icon">✓</span>
+                        <span class="tr-only">Beta fiyat avantajı</span>
+                        <span class="en-only">Beta price advantage</span>
+                    </li>
+                    <li>
+                        <span class="check-icon">✓</span>
+                        <span class="tr-only">Sınırsız kayıt</span>
+                        <span class="en-only">Unlimited recordings</span>
+                    </li>
+                    <li>
+                        <span class="check-icon">✓</span>
+                        <span class="tr-only">AI rapor oluşturma</span>
+                        <span class="en-only">AI report generation</span>
+                    </li>
+                    <li>
+                        <span class="check-icon">✓</span>
+                        <span class="tr-only">macOS ve Windows desteği</span>
+                        <span class="en-only">macOS and Windows support</span>
+                    </li>
+                    <li>
+                        <span class="check-icon">✓</span>
+                        <span class="tr-only">Email desteği</span>
+                        <span class="en-only">Email support</span>
+                    </li>
+                </ul>
+                
+                <a href="https://eshop.ssilistre.dev/buy/3f17aa6f-a896-442f-9aeb-5ea1e1dcabeb?embed=1&logo=0" class="btn btn-primary lemonsqueezy-button tr-only" style="width: 100%; text-align: center;">Satın Al</a>
+                <a href="https://eshop.ssilistre.dev/buy/3f17aa6f-a896-442f-9aeb-5ea1e1dcabeb?embed=1&logo=0" class="btn btn-primary lemonsqueezy-button en-only" style="width: 100%; text-align: center;">Buy Now</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <section id="faq" class="faq">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="tr-only">Sıkça Sorulan Sorular</h2>
+                <h2 class="en-only">Frequently Asked Questions</h2>
+            </div>
+            
+            <div class="faq-list">
+                <!-- Turkish FAQs -->
+                <div class="faq-item tr-only">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        <span>Sistem sesini nasıl kaydediyor?</span>
+                        <span class="faq-icon">▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>
+                            macOS'ta ScreenCaptureKit API kullanıyoruz. Bu sayede BlackHole, Soundflower gibi 
+                            3. parti araçlara ihtiyaç duymadan direkt sistem sesini yakalayabiliyoruz. Windows'ta 
+                            ise WASAPI teknolojisi kullanılıyor.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="faq-item tr-only">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        <span>İnternet bağlantısı gerekli mi?</span>
+                        <span class="faq-icon">▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>
+                            Sadece lisans aktivasyonu ve AI rapor oluşturma için internet gereklidir. 
+                            Transkripsiyon tamamen offline çalışır ve verileriniz cihazınızdan ayrılmaz.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="faq-item tr-only">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        <span>AI modelleri ne kadar yer kaplıyor?</span>
+                        <span class="faq-icon">▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>
+                            Whisper Tiny: 75 MB, Base: 142 MB, Small: 466 MB, Medium: 1.5 GB, Large V3: 3.1 GB. 
+                            İhtiyacınıza göre seçebilirsiniz. Başlangıç için Whisper Base önerilir.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="faq-item tr-only">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        <span>Verilerim güvende mi?</span>
+                        <span class="faq-icon">▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>
+                            Kesinlikle! Tüm kayıtlar, transkriptler ve AI işlemleri yerel cihazınızda gerçekleşir. 
+                            Verileriniz internet üzerinden hiçbir zaman paylaşılmaz veya yüklenmez.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="faq-item tr-only">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        <span>Hangi dilleri destekliyor?</span>
+                        <span class="faq-icon">▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>
+                            Arayüz Türkçe ve İngilizce dillerini destekler. Transkripsiyon için Whisper modelleri 
+                            99+ dili destekler. Otomatik dil algılama veya manuel seçim yapabilirsiniz.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="faq-item tr-only">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        <span>Yıllık lisans nasıl çalışıyor?</span>
+                        <span class="faq-icon">▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>
+                            Yıllık lisans ile 1 yıl boyunca tüm özelliklere tam erişim sağlarsınız. Beta döneminde 
+                            özel fiyatlardan yararlanabilirsiniz. Lisans süresi dolmadan yenileme hatırlatması alırsınız.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="faq-item tr-only">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        <span>Beta ne demek?</span>
+                        <span class="faq-icon">▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>
+                            Notlok şu anda beta aşamasında. Bu, yazılımın aktif geliştirildiği ve yeni özellikler 
+                            eklendiği anlamına gelir. Beta kullanıcıları özel fiyatlardan yararlanır ve ürünün 
+                            gelişimine katkıda bulunur.
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- English FAQs -->
+                <div class="faq-item en-only">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        <span>How does it record system audio?</span>
+                        <span class="faq-icon">▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>
+                            On macOS we use ScreenCaptureKit API. This allows us to capture system audio directly 
+                            without 3rd party tools like BlackHole or Soundflower. On Windows, WASAPI technology is used.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="faq-item en-only">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        <span>Is internet connection required?</span>
+                        <span class="faq-icon">▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>
+                            Internet is only required for license activation and AI report generation. 
+                            Transcription works completely offline and your data never leaves your device.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="faq-item en-only">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        <span>How much space do AI models take?</span>
+                        <span class="faq-icon">▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>
+                            Whisper Tiny: 75 MB, Base: 142 MB, Small: 466 MB, Medium: 1.5 GB, Large V3: 3.1 GB. 
+                            You can choose according to your needs. Whisper Base is recommended for starters.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="faq-item en-only">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        <span>Is my data safe?</span>
+                        <span class="faq-icon">▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>
+                            Absolutely! All recordings, transcripts and AI processing happen on your local device. 
+                            Your data is never shared or uploaded over the internet.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="faq-item en-only">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        <span>What languages does it support?</span>
+                        <span class="faq-icon">▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>
+                            Interface supports Turkish and English. For transcription, Whisper models support 99+ languages. 
+                            You can use automatic language detection or manual selection.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="faq-item en-only">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        <span>How does annual license work?</span>
+                        <span class="faq-icon">▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>
+                            With annual license, you get full access to all features for 1 year. During beta period, 
+                            you can benefit from special pricing. You'll receive renewal reminders before license expires.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="faq-item en-only">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        <span>What does Beta mean?</span>
+                        <span class="faq-icon">▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>
+                            Notlok is currently in beta stage. This means the software is actively being developed and 
+                            new features are being added. Beta users benefit from special pricing and contribute to 
+                            product development.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Notlok</h4>
+                    <p class="tr-only">
+                        AI destekli sesli not uygulaması. Tamamen güvenli ve özel.
+                    </p>
+                    <p class="en-only">
+                        AI-powered voice note app. Completely secure and private.
+                    </p>
+                </div>
+                
+                <div class="footer-section">
+                    <h4 class="tr-only">Ürün</h4>
+                    <h4 class="en-only">Product</h4>
+                    <ul class="footer-links">
+                        <li><a href="#features" class="tr-only">Özellikler</a><a href="#features" class="en-only">Features</a></li>
+                        <li><a href="#pricing" class="tr-only">Fiyatlandırma</a><a href="#pricing" class="en-only">Pricing</a></li>
+                        <li><a href="#" class="tr-only">İndir</a><a href="#" class="en-only">Download</a></li>
+                        <li><a href="#" class="tr-only">Dokümantasyon</a><a href="#" class="en-only">Documentation</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4 class="tr-only">Destek</h4>
+                    <h4 class="en-only">Support</h4>
+                    <ul class="footer-links">
+                        <li><a href="#faq" class="tr-only">S.S.S</a><a href="#faq" class="en-only">FAQ</a></li>
+                        <li><a href="mailto:support@notlok.app" class="tr-only">İletişim</a><a href="mailto:support@notlok.app" class="en-only">Contact</a></li>
+                        <li><a href="#" class="tr-only">Gizlilik</a><a href="#" class="en-only">Privacy</a></li>
+                        <li><a href="#" class="tr-only">Şartlar</a><a href="#" class="en-only">Terms</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4 class="tr-only">Geliştirici</h4>
+                    <h4 class="en-only">Developer</h4>
+                    
+                    <div style="margin-top: 1.5rem; 
+                                background: var(--bg-card); 
+                                border: 1.5px solid var(--border); 
+                                border-radius: 12px; 
+                                padding: 1.25rem; 
+                                transition: all 0.15s ease;">
+                        <a href="https://ssilistre.dev" 
+                           target="_blank" 
+                           rel="noopener" 
+                           style="display: flex; 
+                                  align-items: center; 
+                                  gap: 1rem; 
+                                  text-decoration: none; 
+                                  color: inherit;">
+                            <img src="https://ssilistre.dev/content/images/2025/09/marti-1.png" 
+                                 alt="ssilistre.dev mascot" 
+                                 style="width: 48px; 
+                                        height: 48px; 
+                                        border-radius: 50%; 
+                                        object-fit: cover;
+                                        border: 2px solid var(--border);">
+                            <div style="flex: 1;">
+                                <p style="font-size: 0.95rem; 
+                                          color: var(--text-white); 
+                                          margin-bottom: 0.25rem;
+                                          font-weight: 600;">
+                                    ssilistre.dev
+                                </p>
+                                <p style="font-size: 0.8rem; 
+                                          color: var(--text-gray); 
+                                          margin: 0;
+                                          line-height: 1.4;">
+                                    <span class="tr-only">Sevgiyle geliştirilmiştir ❤️</span>
+                                    <span class="en-only">Developed with love ❤️</span>
+                                </p>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2025 Notlok. <span class="tr-only">Tüm hakları saklıdır.</span><span class="en-only">All rights reserved.</span></p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Header scroll effect
+        const header = document.getElementById('header');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+        
+        // Theme toggle
+        function toggleTheme() {
+            const root = document.documentElement;
+            const currentTheme = root.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            root.setAttribute('data-theme', newTheme);
+            localStorage.setItem('notlok-theme', newTheme);
+        }
+        
+        // Language toggle
+        function toggleLanguage() {
+            const body = document.body;
+            const currentLang = body.getAttribute('lang') || 'tr';
+            const newLang = currentLang === 'tr' ? 'en' : 'tr';
+            
+            // Set the language attribute
+            body.setAttribute('lang', newLang);
+            
+            // Save to localStorage
+            localStorage.setItem('notlok-lang', newLang);
+            
+            // Force reflow to ensure CSS applies
+            body.offsetHeight;
+            
+            console.log('Language changed to:', newLang);
+        }
+        
+        // Load saved preferences on page load
+        (function initPreferences() {
+            const savedTheme = localStorage.getItem('notlok-theme');
+            const savedLang = localStorage.getItem('notlok-lang');
+            
+            // Set theme
+            if (savedTheme) {
+                document.documentElement.setAttribute('data-theme', savedTheme);
+            } else {
+                // Default to dark theme
+                document.documentElement.setAttribute('data-theme', 'dark');
+                localStorage.setItem('notlok-theme', 'dark');
+            }
+            
+            // Set language
+            if (savedLang) {
+                document.body.setAttribute('lang', savedLang);
+            } else {
+                // Default to Turkish
+                document.body.setAttribute('lang', 'tr');
+                localStorage.setItem('notlok-lang', 'tr');
+            }
+        })();
+        
+        // FAQ toggle
+        function toggleFaq(element) {
+            const faqItem = element.parentElement;
+            const isActive = faqItem.classList.contains('active');
+            
+            // Close all FAQ items
+            document.querySelectorAll('.faq-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Toggle current item
+            if (!isActive) {
+                faqItem.classList.add('active');
+            }
+        }
+        
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                const href = this.getAttribute('href');
+                if (href !== '#') {
+                    e.preventDefault();
+                    const target = document.querySelector(href);
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                }
+            });
+        });
+        
+        // Intersection Observer for fade-in animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+        
+        // Observe all feature cards, steps, and sections
+        document.querySelectorAll('.feature-card, .step, .pricing-card, .faq-item').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(el);
+        });
+    </script>
+    
+    <!-- Lemon Squeezy Script -->
+    <script src="https://assets.lemonsqueezy.com/lemon.js" defer></script>
+</body>
+</html>
+
