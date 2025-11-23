@@ -2236,6 +2236,15 @@ textarea:focus {
 }
 
 /* Freemium Styles */
+.modal-overlay {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.upgrade-dialog h2 {
+  color: var(--text-color);
+  margin-top: 0;
+}
+
 .recording-timer {
   display: flex;
   align-items: center;
@@ -2293,6 +2302,8 @@ textarea:focus {
 
 .upgrade-dialog {
   max-width: 500px;
+  background: var(--bg-color);
+  color: var(--text-color);
 }
 
 .upgrade-reason {
@@ -2302,43 +2313,75 @@ textarea:focus {
   font-weight: 500;
 }
 
-.premium-features-list {
+.premium-alert-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
   background: var(--card-bg);
-  border: 2px solid var(--border-color);
+  border: 1px solid var(--border-color);
   border-radius: 8px;
-  padding: 1.5rem;
+  padding: 1rem 1.25rem;
   margin: 1.5rem 0;
 }
 
-.premium-features-list h3 {
-  margin-top: 0;
-  margin-bottom: 1rem;
-  color: var(--primary-color);
+.alert-icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+  opacity: 0.8;
 }
 
-.premium-features-list ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.premium-features-list li {
-  padding: 0.5rem 0;
-  font-size: 1rem;
+.alert-text {
   color: var(--text-color);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  font-weight: 500;
 }
 
 .upgrade-btn {
-  background: linear-gradient(135deg, #ff6b6b 0%, #ff8787 100%);
-  color: white;
+  background: var(--text-color);
+  color: var(--bg-color) !important;
   border: none;
   font-weight: 600;
-  box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+  transition: all 0.3s ease;
 }
 
 .upgrade-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(255, 107, 107, 0.4);
+  opacity: 0.9;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.modal-actions .btn {
+  flex: 1;
+}
+
+.modal-actions .btn.secondary {
+  background: var(--card-bg);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+}
+
+.modal-actions .btn.secondary:hover {
+  background: var(--border-color);
+  opacity: 1;
+}
+
+/* Dark mode button fixes */
+:root[data-theme="dark"] .modal-actions .btn.secondary,
+:root:not([data-theme="light"]) .modal-actions .btn.secondary {
+  background: #2a2a2a;
+  color: #e0e0e0;
+  border-color: #444;
+}
+
+:root[data-theme="dark"] .modal-actions .btn.secondary:hover,
+:root:not([data-theme="light"]) .modal-actions .btn.secondary:hover {
+  background: #333;
 }
 
 .freemium-info {
@@ -2364,4 +2407,84 @@ textarea:focus {
 .freemium-info li {
   padding: 0.375rem 0;
   color: var(--text-color);
+}
+
+/* Modal content theme fixes */
+.modal-content {
+  background: var(--bg-color) !important;
+  color: var(--text-color) !important;
+}
+
+.modal-content h2,
+.modal-content h3,
+.modal-content p,
+.modal-content li {
+  color: var(--text-color) !important;
+}
+
+/* Dark mode specific overrides */
+:root[data-theme="dark"] .upgrade-dialog,
+:root:not([data-theme="light"]) .upgrade-dialog {
+  background: #1a1a1a !important;
+  border: 1px solid #333;
+}
+
+:root[data-theme="dark"] .modal-overlay,
+:root:not([data-theme="light"]) .modal-overlay {
+  background: rgba(0, 0, 0, 0.8);
+}
+
+:root[data-theme="dark"] .premium-alert-bar,
+:root:not([data-theme="light"]) .premium-alert-bar {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: #333;
+}
+
+:root[data-theme="dark"] .alert-text,
+:root:not([data-theme="light"]) .alert-text {
+  color: #e0e0e0;
+}
+
+:root[data-theme="dark"] .upgrade-btn,
+:root:not([data-theme="light"]) .upgrade-btn {
+  background: #fff;
+  color: #000 !important;
+}
+
+:root[data-theme="dark"] .upgrade-btn:hover,
+:root:not([data-theme="light"]) .upgrade-btn:hover {
+  background: #e0e0e0;
+}
+
+:root[data-theme="dark"] .upgrade-reason,
+:root:not([data-theme="light"]) .upgrade-reason {
+  color: #e0e0e0 !important;
+}
+
+/* Light mode specific */
+:root[data-theme="light"] .upgrade-dialog {
+  background: white !important;
+  border: 1px solid #e0e0e0;
+}
+
+:root[data-theme="light"] .modal-overlay {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+:root[data-theme="light"] .premium-alert-bar {
+  background: #f5f5f7;
+  border-color: #e0e0e0;
+}
+
+:root[data-theme="light"] .alert-text {
+  color: #333;
+}
+
+:root[data-theme="light"] .upgrade-btn {
+  background: #000;
+  color: #fff !important;
+}
+
+:root[data-theme="light"] .upgrade-btn:hover {
+  background: #333;
 }

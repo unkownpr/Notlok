@@ -439,8 +439,7 @@ function App() {
   // Freemium states
   const [hasPremiumLicense, setHasPremiumLicense] = useState(false);
   const [recordingDuration, setRecordingDuration] = useState(0);
-  const [showUpgradeDialog, setShowUpgradeDialog] = useState(false);
-  const [upgradeReason, setUpgradeReason] = useState("");
+  const [showRemoveLicenseDialog, setShowRemoveLicenseDialog] = useState(false);
 
   // AI Report states
   const [aiProvider, setAiProvider] = useState<AIProvider>(() => {
@@ -753,18 +752,41 @@ function App() {
     setIsLicenseChecked(true);
   }
 
-  async function removeLicense() {
-    if (!window.confirm(t.confirmRemoveLicense)) return;
+  function removeLicense() {
+    console.log("removeLicense called - showing dialog");
+    setShowRemoveLicenseDialog(true);
+  }
+  
+  async function confirmRemoveLicense() {
+    console.log("User confirmed, removing license...");
+    setShowRemoveLicenseDialog(false);
     
-    // Clear local state
-    setLicenseInfo(null);
-    setLicenseKey("");
-    setUserEmail("");
-    localStorage.removeItem("notlok-license-key");
-    
-    // Remove from backend
-    await invoke("remove_premium_license");
-    setHasPremiumLicense(false);
+    try {
+      // Clear local state first
+      console.log("Clearing local state...");
+      setLicenseInfo(null);
+      setLicenseKey("");
+      setUserEmail("");
+      localStorage.removeItem("notlok-license-key");
+      
+      // Remove from backend
+      console.log("Calling backend remove_premium_license...");
+      await invoke("remove_premium_license");
+      setHasPremiumLicense(false);
+      
+      console.log("✅ License removed successfully!");
+      console.log("hasPremiumLicense:", false);
+      console.log("licenseInfo:", null);
+    } catch (error) {
+      console.error("❌ Error removing license:", error);
+      // Still clear local state even if backend fails
+      setLicenseInfo(null);
+      setLicenseKey("");
+      setUserEmail("");
+      setHasPremiumLicense(false);
+      localStorage.removeItem("notlok-license-key");
+      console.log("Local state cleared despite backend error");
+    }
   }
 
   function getPromptText(): string {
@@ -1115,8 +1137,7 @@ function App() {
   async function checkForUpdates(silent = false) {
     // Check for premium license
     if (!hasPremiumLicense) {
-      setUpgradeReason(t.updatesLocked);
-      setShowUpgradeDialog(true);
+      setActiveTab("license");
       return;
     }
     
@@ -1311,9 +1332,8 @@ function App() {
           // Check if limit reached for free users
           if (!hasPremiumLicense && duration >= 60) {
             clearInterval(timerInterval);
-            setUpgradeReason(t.recordingLimitReached);
-            setShowUpgradeDialog(true);
             await stopRecording();
+            setActiveTab("license");
           }
         } catch (error) {
           console.error("Error getting recording duration:", error);
@@ -1531,8 +1551,7 @@ function App() {
             if (hasPremiumLicense) {
               setActiveTab("aireport");
             } else {
-              setUpgradeReason(t.aiReportLocked);
-              setShowUpgradeDialog(true);
+              setActiveTab("license");
             }
           }}
           title={!hasPremiumLicense ? t.premiumOnly : ""}
@@ -1546,8 +1565,7 @@ function App() {
               setActiveTab("history");
               setSelectedHistoryItem(null);
             } else {
-              setUpgradeReason(t.historyLocked);
-              setShowUpgradeDialog(true);
+              setActiveTab("license");
             }
           }}
           title={!hasPremiumLicense ? t.premiumOnly : ""}
@@ -2293,38 +2311,29 @@ function App() {
         </>
       )}
       
-      {/* Upgrade Dialog */}
-      {showUpgradeDialog && (
-        <div className="modal-overlay" onClick={() => setShowUpgradeDialog(false)}>
+      
+      {/* Remove License Confirmation Dialog */}
+      {showRemoveLicenseDialog && (
+        <div className="modal-overlay" onClick={() => setShowRemoveLicenseDialog(false)}>
           <div className="modal-content upgrade-dialog" onClick={(e) => e.stopPropagation()}>
-            <h2>💎 {t.upgradeToPremium}</h2>
-            <p className="upgrade-reason">{upgradeReason}</p>
-            
-            <div className="premium-features-list">
-              <h3>{t.premiumFeatures}:</h3>
-              <ul>
-                <li>✅ {t.unlimitedRecording}</li>
-                <li>✅ {uiLanguage === 'tr' ? 'Geçmiş erişimi' : 'Recording history access'}</li>
-                <li>✅ {uiLanguage === 'tr' ? 'AI raporları' : 'AI reports'}</li>
-                <li>✅ {uiLanguage === 'tr' ? 'Otomatik güncellemeler' : 'Auto-updates'}</li>
-              </ul>
-            </div>
+            <h2>⚠️ {t.removeLicense}</h2>
+            <p className="upgrade-reason">{t.confirmRemoveLicense}</p>
             
             <div className="modal-actions">
               <button
-                onClick={() => {
-                  setShowUpgradeDialog(false);
-                  setActiveTab("license");
-                }}
+                onClick={confirmRemoveLicense}
                 className="btn upgrade-btn"
               >
-                🚀 {t.getLicense}
+                🗑️ {uiLanguage === 'tr' ? 'Evet, Kaldır' : 'Yes, Remove'}
               </button>
               <button
-                onClick={() => setShowUpgradeDialog(false)}
+                onClick={() => {
+                  console.log("User cancelled license removal");
+                  setShowRemoveLicenseDialog(false);
+                }}
                 className="btn secondary"
               >
-                {uiLanguage === 'tr' ? 'Kapat' : 'Close'}
+                {uiLanguage === 'tr' ? 'İptal' : 'Cancel'}
               </button>
             </div>
           </div>
