@@ -392,7 +392,7 @@ function App() {
   });
   
   // Update check
-  const [appVersion, setAppVersion] = useState("1.0.1");
+  const [appVersion, setAppVersion] = useState("1.0.2");
   const [updateInfo, setUpdateInfo] = useState<UpdateInfo | null>(null);
   const [isCheckingUpdate, setIsCheckingUpdate] = useState(false);
   const [showUpdateDialog, setShowUpdateDialog] = useState(false);

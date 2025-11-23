@@ -2,7 +2,7 @@
   "name": "notlok",
   "description": "AI Destekli Sesli Not Uygulaması - Voice note app with AI transcription",
   "private": true,
-  "version": "1.0.1",
+  "version": "1.0.2",
   "type": "module",
   "scripts": {
     "dev": "vite",
