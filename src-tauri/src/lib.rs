@@ -382,13 +382,14 @@ fn get_audio_stats(state: State<'_, AppState>) -> Result<AudioStats, String> {
 }
 
 #[tauri::command]
-fn stop_recording_only(state: State<'_, AppState>) -> Result<(), String> {
-    state.recorder.stop_recording()?;
+async fn stop_recording_only(state: State<'_, AppState>) -> Result<(), String> {
+    // Non-blocking stop - just set the flag
+    let _ = state.recorder.stop_recording();
     Ok(())
 }
 
 #[tauri::command]
-fn transcribe_audio(state: State<'_, AppState>) -> Result<String, String> {
+async fn transcribe_audio(state: State<'_, AppState>) -> Result<String, String> {
     // Get the recorded audio buffer
     let audio_data = state.recorder.get_audio_buffer();
 
@@ -399,12 +400,14 @@ fn transcribe_audio(state: State<'_, AppState>) -> Result<String, String> {
         audio_data
     };
 
-    let mut transcriber = state.transcriber.lock().map_err(|e| e.to_string())?;
-    if let Some(t) = transcriber.as_mut() {
-        return t.transcribe(&audio_to_use);
-    }
-
-    Ok("Kayıt durduruldu. Model yüklenmemiş, transkript yok.".to_string())
+    // Run transcription in a blocking context to avoid blocking the async runtime
+    tokio::task::block_in_place(|| {
+        let mut transcriber = state.transcriber.lock().map_err(|e| e.to_string())?;
+        if let Some(t) = transcriber.as_mut() {
+            return t.transcribe(&audio_to_use);
+        }
+        Ok("Kayıt durduruldu. Model yüklenmemiş, transkript yok.".to_string())
+    })
 }
 
 #[tauri::command]
