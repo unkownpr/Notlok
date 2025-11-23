@@ -107,6 +107,8 @@ pub struct AppState {
     transcriber: Mutex<Option<TranscriberModel>>,
     current_model: Mutex<Option<String>>,
     language: Mutex<String>,
+    recording_start_time: Mutex<Option<std::time::Instant>>,
+    has_premium_license: Mutex<bool>,
 }
 
 fn get_models_dir(app: &AppHandle) -> PathBuf {
@@ -347,7 +349,43 @@ fn get_input_device(state: State<'_, AppState>) -> Result<Option<String>, String
 
 #[tauri::command]
 fn start_recording(state: State<'_, AppState>) -> Result<(), String> {
+    // Start recording timer
+    let mut start_time = state.recording_start_time.lock().map_err(|e| e.to_string())?;
+    *start_time = Some(std::time::Instant::now());
+    
     state.recorder.start_recording()
+}
+
+#[tauri::command]
+fn get_recording_duration(state: State<'_, AppState>) -> Result<f64, String> {
+    let start_time = state.recording_start_time.lock().map_err(|e| e.to_string())?;
+    
+    if let Some(start) = *start_time {
+        let duration = start.elapsed().as_secs_f64();
+        Ok(duration)
+    } else {
+        Ok(0.0)
+    }
+}
+
+#[tauri::command]
+fn check_recording_limit(state: State<'_, AppState>) -> Result<bool, String> {
+    // Check if user has premium license
+    let has_premium = *state.has_premium_license.lock().map_err(|e| e.to_string())?;
+    
+    if has_premium {
+        return Ok(false); // No limit for premium users
+    }
+    
+    // Free users: 60 seconds limit
+    let start_time = state.recording_start_time.lock().map_err(|e| e.to_string())?;
+    
+    if let Some(start) = *start_time {
+        let duration = start.elapsed().as_secs_f64();
+        Ok(duration >= 60.0) // true if limit reached
+    } else {
+        Ok(false)
+    }
 }
 
 #[tauri::command]
@@ -389,6 +427,10 @@ fn get_audio_stats(state: State<'_, AppState>) -> Result<AudioStats, String> {
 
 #[tauri::command]
 async fn stop_recording_only(state: State<'_, AppState>) -> Result<(), String> {
+    // Reset recording timer
+    let mut start_time = state.recording_start_time.lock().map_err(|e| e.to_string())?;
+    *start_time = None;
+    
     // Non-blocking stop - just set the flag
     let _ = state.recorder.stop_recording();
     Ok(())
@@ -496,6 +538,34 @@ fn open_microphone_preferences() {
 }
 
 #[tauri::command]
+fn set_premium_license(state: State<'_, AppState>, license_key: String) -> Result<bool, String> {
+    // Simple validation - in production, this should validate against your license server
+    // For now, we'll just check if license_key is not empty
+    let is_valid = !license_key.trim().is_empty();
+    
+    if is_valid {
+        let mut has_premium = state.has_premium_license.lock().map_err(|e| e.to_string())?;
+        *has_premium = true;
+        Ok(true)
+    } else {
+        Ok(false)
+    }
+}
+
+#[tauri::command]
+fn check_premium_license(state: State<'_, AppState>) -> Result<bool, String> {
+    let has_premium = *state.has_premium_license.lock().map_err(|e| e.to_string())?;
+    Ok(has_premium)
+}
+
+#[tauri::command]
+fn remove_premium_license(state: State<'_, AppState>) -> Result<(), String> {
+    let mut has_premium = state.has_premium_license.lock().map_err(|e| e.to_string())?;
+    *has_premium = false;
+    Ok(())
+}
+
+#[tauri::command]
 fn get_hostname() -> String {
     use std::process::Command;
     
@@ -589,6 +659,8 @@ pub fn run() {
         transcriber: Mutex::new(None),
         current_model: Mutex::new(None),
         language: Mutex::new("tr".to_string()),
+        recording_start_time: Mutex::new(None),
+        has_premium_license: Mutex::new(false),
     };
 
     tauri::Builder::default()
@@ -606,6 +678,11 @@ pub fn run() {
             transcribe_audio,
             get_audio_buffer_size,
             get_audio_stats,
+            get_recording_duration,
+            check_recording_limit,
+            set_premium_license,
+            check_premium_license,
+            remove_premium_license,
             list_models,
             is_model_downloaded,
             download_model,

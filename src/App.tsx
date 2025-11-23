@@ -133,6 +133,25 @@ const translations = {
     aiUsageLimit: "Limit",
     aiUsagePackage: "Paket",
     aiUsageResetDate: "Yenileme Tarihi",
+    // Freemium
+    freeTier: "Ücretsiz Sürüm",
+    premiumTier: "Premium Sürüm",
+    upgrade: "Premium'a Geç",
+    upgradeToPremium: "Premium'a Yükselt",
+    recordingLimit: "Kayıt Süresi Limiti",
+    recordingLimitReached: "1 dakika kayıt limiti doldu!",
+    recordingTimeLeft: "Kalan Süre",
+    unlimitedRecording: "Sınırsız Kayıt",
+    premiumFeatures: "Premium Özellikler",
+    unlockPremium: "Premium özelliklerin kilidini açın",
+    historyLocked: "Geçmiş yalnızca Premium kullanıcılar için",
+    aiReportLocked: "AI Rapor yalnızca Premium kullanıcılar için",
+    updatesLocked: "Güncellemeler yalnızca Premium kullanıcılar için",
+    getLicense: "Lisans Satın Al",
+    freeFeatures: "Ücretsiz Özellikler",
+    premiumOnly: "Sadece Premium",
+    removeLicense: "Lisansı Kaldır",
+    confirmRemoveLicense: "Lisansı kaldırmak istediğinizden emin misiniz?",
   },
   en: {
     title: "Notlok",
@@ -260,6 +279,25 @@ const translations = {
     aiUsageLimit: "Limit",
     aiUsagePackage: "Package",
     aiUsageResetDate: "Reset Date",
+    // Freemium
+    freeTier: "Free Version",
+    premiumTier: "Premium Version",
+    upgrade: "Upgrade to Premium",
+    upgradeToPremium: "Upgrade to Premium",
+    recordingLimit: "Recording Time Limit",
+    recordingLimitReached: "1 minute recording limit reached!",
+    recordingTimeLeft: "Time Remaining",
+    unlimitedRecording: "Unlimited Recording",
+    premiumFeatures: "Premium Features",
+    unlockPremium: "Unlock premium features",
+    historyLocked: "History is only for Premium users",
+    aiReportLocked: "AI Report is only for Premium users",
+    updatesLocked: "Updates are only for Premium users",
+    getLicense: "Get License",
+    freeFeatures: "Free Features",
+    premiumOnly: "Premium Only",
+    removeLicense: "Remove License",
+    confirmRemoveLicense: "Are you sure you want to remove the license?",
   },
 };
 
@@ -397,6 +435,12 @@ function App() {
   const [isCheckingUpdate, setIsCheckingUpdate] = useState(false);
   const [showUpdateDialog, setShowUpdateDialog] = useState(false);
   const [showUpToDateDialog, setShowUpToDateDialog] = useState(false);
+  
+  // Freemium states
+  const [hasPremiumLicense, setHasPremiumLicense] = useState(false);
+  const [recordingDuration, setRecordingDuration] = useState(0);
+  const [showUpgradeDialog, setShowUpgradeDialog] = useState(false);
+  const [upgradeReason, setUpgradeReason] = useState("");
 
   // AI Report states
   const [aiProvider, setAiProvider] = useState<AIProvider>(() => {
@@ -460,9 +504,21 @@ function App() {
         if (savedKey) {
           setLicenseKey(savedKey);
           validateLicense(savedKey); // Don't await, runs in background
+          // Check premium status from backend
+          try {
+            const isPremium = await invoke<boolean>("check_premium_license");
+            setHasPremiumLicense(isPremium);
+            if (!isPremium) {
+              // Set premium if we have a saved license key
+              await invoke("set_premium_license", { licenseKey: savedKey });
+              setHasPremiumLicense(true);
+            }
+          } catch (error) {
+            console.error("Error checking premium license:", error);
+          }
         } else {
           setIsLicenseChecked(true);
-          setActiveTab("license");
+          // Don't force license tab for freemium
         }
 
         // Get computer name (not displayed in UI but used for license activation)
@@ -613,6 +669,11 @@ function App() {
 
         setLicenseInfo(info);
         localStorage.setItem("notlok-license-key", licenseKey.trim());
+        
+        // Set premium license in backend
+        await invoke("set_premium_license", { licenseKey: licenseKey.trim() });
+        setHasPremiumLicense(true);
+        
         setActiveTab("main");
       } else {
         // Check if activation limit reached
@@ -690,6 +751,20 @@ function App() {
     }
 
     setIsLicenseChecked(true);
+  }
+
+  async function removeLicense() {
+    if (!window.confirm(t.confirmRemoveLicense)) return;
+    
+    // Clear local state
+    setLicenseInfo(null);
+    setLicenseKey("");
+    setUserEmail("");
+    localStorage.removeItem("notlok-license-key");
+    
+    // Remove from backend
+    await invoke("remove_premium_license");
+    setHasPremiumLicense(false);
   }
 
   function getPromptText(): string {
@@ -1038,6 +1113,13 @@ function App() {
   }
 
   async function checkForUpdates(silent = false) {
+    // Check for premium license
+    if (!hasPremiumLicense) {
+      setUpgradeReason(t.updatesLocked);
+      setShowUpgradeDialog(true);
+      return;
+    }
+    
     if (!silent) setIsCheckingUpdate(true);
     
     try {
@@ -1218,6 +1300,28 @@ function App() {
       setIsRecording(true);
       setStatus("recording");
       setRecordingStartTime(Date.now());
+      setRecordingDuration(0);
+      
+      // Start timer to track recording duration
+      const timerInterval = setInterval(async () => {
+        try {
+          const duration = await invoke<number>("get_recording_duration");
+          setRecordingDuration(duration);
+          
+          // Check if limit reached for free users
+          if (!hasPremiumLicense && duration >= 60) {
+            clearInterval(timerInterval);
+            setUpgradeReason(t.recordingLimitReached);
+            setShowUpgradeDialog(true);
+            await stopRecording();
+          }
+        } catch (error) {
+          console.error("Error getting recording duration:", error);
+        }
+      }, 100); // Update every 100ms for smooth countdown
+      
+      // Store interval ID to clear on stop
+      (window as any).recordingTimerInterval = timerInterval;
     } catch (error) {
       console.error(error);
       setStatus(`Error: ${error}`);
@@ -1230,6 +1334,13 @@ function App() {
     try {
       setIsStopping(true);
       setIsRecording(false);
+      
+      // Clear recording timer
+      if ((window as any).recordingTimerInterval) {
+        clearInterval((window as any).recordingTimerInterval);
+        (window as any).recordingTimerInterval = null;
+      }
+      setRecordingDuration(0);
       
       // Audio kaydını hemen durdur (hızlı)
       await invoke("stop_recording_only");
@@ -1247,8 +1358,8 @@ function App() {
           setStatus("stopped");
           setTranscript(result);
 
-          // Save to history
-          if (result && result.trim()) {
+          // Save to history (only for premium users)
+          if (result && result.trim() && hasPremiumLicense) {
             const newRecord: RecordingHistory = {
               id: Date.now().toString(),
               date: new Date().toISOString(),
@@ -1411,23 +1522,37 @@ function App() {
         <button
           className={`tab ${activeTab === "main" ? "active" : ""}`}
           onClick={() => setActiveTab("main")}
-          disabled={!licenseInfo?.valid}
         >
           {t.main}
         </button>
         <button
-          className={`tab ${activeTab === "aireport" ? "active" : ""}`}
-          onClick={() => setActiveTab("aireport")}
-          disabled={!licenseInfo?.valid}
+          className={`tab ${activeTab === "aireport" ? "active" : ""} ${!hasPremiumLicense ? "premium-locked" : ""}`}
+          onClick={() => {
+            if (hasPremiumLicense) {
+              setActiveTab("aireport");
+            } else {
+              setUpgradeReason(t.aiReportLocked);
+              setShowUpgradeDialog(true);
+            }
+          }}
+          title={!hasPremiumLicense ? t.premiumOnly : ""}
         >
-          {t.aiReportTab}
+          {t.aiReportTab} {!hasPremiumLicense && "🔒"}
         </button>
         <button
-          className={`tab ${activeTab === "history" ? "active" : ""}`}
-          onClick={() => { setActiveTab("history"); setSelectedHistoryItem(null); }}
-          disabled={!licenseInfo?.valid}
+          className={`tab ${activeTab === "history" ? "active" : ""} ${!hasPremiumLicense ? "premium-locked" : ""}`}
+          onClick={() => {
+            if (hasPremiumLicense) {
+              setActiveTab("history");
+              setSelectedHistoryItem(null);
+            } else {
+              setUpgradeReason(t.historyLocked);
+              setShowUpgradeDialog(true);
+            }
+          }}
+          title={!hasPremiumLicense ? t.premiumOnly : ""}
         >
-          {t.history}
+          {t.history} {!hasPremiumLicense && "🔒"}
         </button>
         <button
           className={`tab ${activeTab === "license" ? "active" : ""}`}
@@ -1438,7 +1563,6 @@ function App() {
         <button
           className={`tab ${activeTab === "settings" ? "active" : ""}`}
           onClick={() => setActiveTab("settings")}
-          disabled={!licenseInfo?.valid}
         >
           {t.settings}
         </button>
@@ -1516,6 +1640,28 @@ function App() {
               >
                 {isStopping ? t.stoppingRecording : t.stopRecording}
               </button>
+            )}
+            
+            {/* Recording Timer (Free Tier Countdown) */}
+            {isRecording && !hasPremiumLicense && (
+              <div className="recording-timer">
+                <span className="timer-label">{t.recordingTimeLeft}:</span>
+                <span className={`timer-value ${recordingDuration >= 50 ? 'timer-warning' : ''}`}>
+                  {Math.max(0, 60 - Math.floor(recordingDuration))}s
+                </span>
+                {recordingDuration >= 45 && (
+                  <span className="timer-hint">
+                    ⚠️ {uiLanguage === 'tr' ? 'Limit dolmak üzere' : 'Limit almost reached'}
+                  </span>
+                )}
+              </div>
+            )}
+            
+            {isRecording && hasPremiumLicense && (
+              <div className="recording-timer premium">
+                <span className="timer-label">⏱️ {Math.floor(recordingDuration / 60)}:{String(Math.floor(recordingDuration % 60)).padStart(2, '0')}</span>
+                <span className="timer-hint premium">✨ {t.unlimitedRecording}</span>
+              </div>
             )}
           </div>
 
@@ -1926,26 +2072,33 @@ function App() {
                   <span>{licenseInfo.expiresAt ? new Date(licenseInfo.expiresAt).toLocaleDateString() : t.never}</span>
                 </div>
                 <button
-                  onClick={() => {
-                    if (confirm(uiLanguage === 'tr' 
-                      ? 'Lisansınızı kaldırmak istediğinizden emin misiniz? Uygulamayı kullanmaya devam etmek için yeniden lisans girmeniz gerekecek.' 
-                      : 'Are you sure you want to remove your license? You will need to enter a license again to continue using the app.')) {
-                      localStorage.removeItem("notlok-license-key");
-                      setLicenseInfo(null);
-                      setLicenseKey("");
-                      setUserEmail("");
-                      setLicenseError("");
-                    }
-                  }}
+                  onClick={removeLicense}
                   className="btn secondary"
                   style={{ marginTop: '1rem' }}
                 >
-                  {uiLanguage === 'tr' ? '🗑️ Lisansı Kaldır' : '🗑️ Remove License'}
+                  {t.removeLicense}
                 </button>
               </div>
             ) : (
               <div className="license-activation">
-                <p className="license-required">{t.licenseRequired}</p>
+                <div className="freemium-info">
+                  <h4>🆓 {t.freeTier}</h4>
+                  <ul>
+                    <li>✅ {uiLanguage === 'tr' ? '1 dakikaya kadar kayıt' : 'Up to 1 minute recording'}</li>
+                    <li>✅ {uiLanguage === 'tr' ? 'Çoklu dil desteği' : 'Multi-language support'}</li>
+                    <li>✅ {uiLanguage === 'tr' ? 'Cihaz seçimi' : 'Device selection'}</li>
+                  </ul>
+                  
+                  <h4 style={{ marginTop: '1.5rem' }}>💎 {t.premiumTier}</h4>
+                  <ul>
+                    <li>🔓 {t.unlimitedRecording}</li>
+                    <li>🔓 {uiLanguage === 'tr' ? 'Geçmiş erişimi' : 'Recording history'}</li>
+                    <li>🔓 {uiLanguage === 'tr' ? 'AI raporları' : 'AI reports'}</li>
+                    <li>🔓 {uiLanguage === 'tr' ? 'Otomatik güncellemeler' : 'Auto-updates'}</li>
+                  </ul>
+                </div>
+                
+                <p className="license-required" style={{ marginTop: '1.5rem' }}>{t.enterLicenseKey}</p>
                 
                 <div className="license-info-box">
                   <div className="info-icon">ℹ️</div>
@@ -2138,6 +2291,44 @@ function App() {
             </div>
           )}
         </>
+      )}
+      
+      {/* Upgrade Dialog */}
+      {showUpgradeDialog && (
+        <div className="modal-overlay" onClick={() => setShowUpgradeDialog(false)}>
+          <div className="modal-content upgrade-dialog" onClick={(e) => e.stopPropagation()}>
+            <h2>💎 {t.upgradeToPremium}</h2>
+            <p className="upgrade-reason">{upgradeReason}</p>
+            
+            <div className="premium-features-list">
+              <h3>{t.premiumFeatures}:</h3>
+              <ul>
+                <li>✅ {t.unlimitedRecording}</li>
+                <li>✅ {uiLanguage === 'tr' ? 'Geçmiş erişimi' : 'Recording history access'}</li>
+                <li>✅ {uiLanguage === 'tr' ? 'AI raporları' : 'AI reports'}</li>
+                <li>✅ {uiLanguage === 'tr' ? 'Otomatik güncellemeler' : 'Auto-updates'}</li>
+              </ul>
+            </div>
+            
+            <div className="modal-actions">
+              <button
+                onClick={() => {
+                  setShowUpgradeDialog(false);
+                  setActiveTab("license");
+                }}
+                className="btn upgrade-btn"
+              >
+                🚀 {t.getLicense}
+              </button>
+              <button
+                onClick={() => setShowUpgradeDialog(false)}
+                className="btn secondary"
+              >
+                {uiLanguage === 'tr' ? 'Kapat' : 'Close'}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </main>
   );
