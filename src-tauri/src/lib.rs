@@ -276,7 +276,7 @@ async fn download_model(app: AppHandle, model_id: String) -> Result<String, Stri
 }
 
 #[tauri::command]
-fn load_model(app: AppHandle, state: State<'_, AppState>, model_id: String) -> Result<String, String> {
+async fn load_model(app: AppHandle, state: State<'_, AppState>, model_id: String) -> Result<String, String> {
     let model_path = get_model_path(&app, &model_id);
 
     if !model_path.exists() {
@@ -284,21 +284,27 @@ fn load_model(app: AppHandle, state: State<'_, AppState>, model_id: String) -> R
     }
 
     let path_str = model_path.to_string_lossy().to_string();
-    let mut transcriber_guard = state.transcriber.lock().map_err(|e| e.to_string())?;
+    
+    // Run model loading in a blocking task to avoid blocking the async runtime
+    // Model loading is CPU-intensive and takes time
+    let model_id_clone = model_id.clone();
+    tokio::task::block_in_place(move || {
+        let mut transcriber_guard = state.transcriber.lock().map_err(|e| e.to_string())?;
 
-    if is_whisper_model(&model_id) {
-        let transcriber = WhisperTranscriber::new(&path_str)?;
-        *transcriber_guard = Some(TranscriberModel::Whisper(transcriber));
-    } else if is_parakeet_model(&model_id) {
-        let transcriber = ParakeetTranscriber::new(&path_str)?;
-        *transcriber_guard = Some(TranscriberModel::Parakeet(transcriber));
-    } else {
-        return Err("Bilinmeyen model türü".to_string());
-    }
+        if is_whisper_model(&model_id) {
+            let transcriber = WhisperTranscriber::new(&path_str)?;
+            *transcriber_guard = Some(TranscriberModel::Whisper(transcriber));
+        } else if is_parakeet_model(&model_id) {
+            let transcriber = ParakeetTranscriber::new(&path_str)?;
+            *transcriber_guard = Some(TranscriberModel::Parakeet(transcriber));
+        } else {
+            return Err("Bilinmeyen model türü".to_string());
+        }
 
-    *state.current_model.lock().map_err(|e| e.to_string())? = Some(model_id.clone());
+        *state.current_model.lock().map_err(|e| e.to_string())? = Some(model_id.clone());
 
-    Ok(format!("Model yüklendi: {}", model_id))
+        Ok(format!("Model yüklendi: {}", model_id_clone))
+    })
 }
 
 #[tauri::command]

@@ -932,21 +932,30 @@ function App() {
   }
 
   async function autoLoadSavedModel(modelId: string) {
-    try {
-      const isDownloaded = await invoke<boolean>("is_model_downloaded", { modelId });
-      if (isDownloaded) {
-        // Don't block the UI, just show status
-        setStatus(`${modelId} ${t.modelLoading}`);
-        await invoke<string>("load_model", { modelId });
-        setCurrentModel(modelId);
-        // Translate the status message
-        const translatedStatus = `${t.modelLoaded} ${modelId}`;
-        setStatus(translatedStatus);
+    // Run completely in background without blocking UI
+    setTimeout(async () => {
+      try {
+        const isDownloaded = await invoke<boolean>("is_model_downloaded", { modelId });
+        if (isDownloaded) {
+          // Show loading status but don't block UI
+          setStatus(`${modelId} ${t.modelLoading}`);
+          setIsModelLoading(true);
+          
+          // Model loading happens in background (Rust async)
+          await invoke<string>("load_model", { modelId });
+          
+          setCurrentModel(modelId);
+          setIsModelLoading(false);
+          // Translate the status message
+          const translatedStatus = `${t.modelLoaded} ${modelId}`;
+          setStatus(translatedStatus);
+        }
+      } catch (error) {
+        console.error("Failed to auto-load model:", error);
+        setStatus(`${t.error} ${error}`);
+        setIsModelLoading(false);
       }
-    } catch (error) {
-      console.error("Failed to auto-load model:", error);
-      setStatus(`${t.error} ${error}`);
-    }
+    }, 500); // Small delay to ensure UI is fully rendered first
   }
 
   async function loadSettings() {
