@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
+import { getVersion } from "@tauri-apps/api/app";
 import "./App.css";
 import { logger } from "./utils/logger";
 
@@ -391,7 +392,7 @@ function App() {
   });
   
   // Update check
-  const [appVersion] = useState("1.0.0"); // From package.json
+  const [appVersion, setAppVersion] = useState("1.0.1");
   const [updateInfo, setUpdateInfo] = useState<UpdateInfo | null>(null);
   const [isCheckingUpdate, setIsCheckingUpdate] = useState(false);
   const [showUpdateDialog, setShowUpdateDialog] = useState(false);
@@ -450,6 +451,10 @@ function App() {
     // Load models, settings, and permissions on mount
     async function initializeApp() {
       try {
+        // Get app version from Tauri
+        const version = await getVersion();
+        setAppVersion(version);
+
         // First, check license (fastest, no UI blocking)
         const savedKey = localStorage.getItem("notlok-license-key");
         if (savedKey) {
