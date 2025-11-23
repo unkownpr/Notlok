@@ -25,8 +25,6 @@ dist-ssr
 
 # Project specific
 php web api/
-*.md
-!README.md
 
 # Large model files (download separately)
 src-tauri/models/*.bin
