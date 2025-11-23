@@ -1199,37 +1199,48 @@ function App() {
     try {
       setIsStopping(true);
       setIsRecording(false);
-      setStatus("processing"); // Yeni status: işleniyor
       
-      // Audio kaydını durdur
+      // Audio kaydını hemen durdur (hızlı)
       await invoke("stop_recording_only");
       
-      // Transkripsiyon işlemini başlat (asenkron)
-      const result = await invoke<string>("transcribe_audio");
+      // UI'ı serbest bırak - transkripsiyon arka planda çalışacak
+      setIsStopping(false);
+      setStatus("processing"); // İşleniyor göster
       
-      setStatus("stopped");
-      setTranscript(result);
+      // Transkripsiyon işlemini arka planda başlat
+      // UI donmadan çalışacak
+      setTimeout(async () => {
+        try {
+          const result = await invoke<string>("transcribe_audio");
+          
+          setStatus("stopped");
+          setTranscript(result);
 
-      // Save to history
-      if (result && result.trim()) {
-        const newRecord: RecordingHistory = {
-          id: Date.now().toString(),
-          date: new Date().toISOString(),
-          transcript: result,
-          aiReport: "",
-          model: currentModel || "",
-          language: transcriptionLanguage,
-        };
-        const updatedHistory = [newRecord, ...recordingHistory];
-        setRecordingHistory(updatedHistory);
-        localStorage.setItem("notlok-history", JSON.stringify(updatedHistory));
-      }
-
-      setRecordingStartTime(null);
+          // Save to history
+          if (result && result.trim()) {
+            const newRecord: RecordingHistory = {
+              id: Date.now().toString(),
+              date: new Date().toISOString(),
+              transcript: result,
+              aiReport: "",
+              model: currentModel || "",
+              language: transcriptionLanguage,
+            };
+            const updatedHistory = [newRecord, ...recordingHistory];
+            setRecordingHistory(updatedHistory);
+            localStorage.setItem("notlok-history", JSON.stringify(updatedHistory));
+          }
+        } catch (error) {
+          console.error(error);
+          setStatus(`${t.error} ${error}`);
+        }
+        
+        setRecordingStartTime(null);
+      }, 100); // Küçük delay ile UI'ı serbest bırak
+      
     } catch (error) {
       console.error(error);
-      setStatus(`Error: ${error}`);
-    } finally {
+      setStatus(`${t.error} ${error}`);
       setIsStopping(false);
     }
   }
@@ -1462,9 +1473,9 @@ function App() {
               <button
                 onClick={startRecording}
                 className="btn start"
-                disabled={!currentModel}
+                disabled={!currentModel || status === "processing"}
               >
-                {currentModel ? t.startRecording : t.loadModelFirst}
+                {!currentModel ? t.loadModelFirst : status === "processing" ? t.processing : t.startRecording}
               </button>
             ) : (
               <button 
@@ -1477,10 +1488,17 @@ function App() {
             )}
           </div>
 
-          {isStopping && (
-            <div className="loading-screen" style={{ padding: '20px', background: 'var(--card-bg)' }}>
+          {(isStopping || status === "processing") && (
+            <div className="loading-screen" style={{ padding: '20px', background: 'var(--card-bg)', borderRadius: '8px', marginTop: '1rem' }}>
               <div className="loading-spinner"></div>
-              <p>{t.stoppingRecording}</p>
+              <p>{status === "processing" ? t.processing : t.stoppingRecording}</p>
+              {status === "processing" && (
+                <p style={{ fontSize: '0.9rem', opacity: 0.7, marginTop: '0.5rem' }}>
+                  {uiLanguage === 'tr' 
+                    ? 'Bu işlem birkaç dakika sürebilir. Uygulama yanıt veriyor.' 
+                    : 'This may take a few minutes. The app is still responsive.'}
+                </p>
+              )}
             </div>
           )}
 
