@@ -1,237 +1,105 @@
-# 🎙️ Notlok - AI Destekli Sesli Not Uygulaması
+# 🎙️ Notlok
 
-> Yerel, güvenli ve özel sesli not uygulamanız. Tüm işlemler cihazınızda gerçekleşir.
+**Real-time audio transcription app powered by Whisper AI**
 
-[![License](https://img.shields.io/badge/license-Proprietary-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-0.1.0-green.svg)](package.json)
-[![Platform](https://img.shields.io/badge/platform-macOS%20|%20Windows-lightgrey.svg)]()
+Notlok is a cross-platform desktop application that provides real-time audio transcription with support for multiple languages, AI-powered meeting summaries, and advanced audio device management.
 
----
+![Notlok Banner](public/icon.png)
 
-## ✨ Özellikler
+## ✨ Features
 
-### 🎯 Temel Özellikler
-- 🎤 **Sistem Ses Yakalama**: BlackHole veya loopback device olmadan sistem sesi kaydı
-- 🤖 **AI Transkripsiyon**: Yerel Whisper ve Parakeet modelleri ile transkripsiyon
-- 📝 **AI Rapor Oluşturma**: Sesli not özetleri, aksiyon maddeleri, karar günlükleri
-- 💾 **Kayıt Geçmişi**: Tüm kayıtlarınız ve AI raporlarınız yerel olarak saklanır
-- 🔐 **Lisans Sistemi**: Lemon Squeezy entegrasyonu ile güvenli aktivasyon
-- 🌍 **Çoklu Dil**: Türkçe ve İngilizce arayüz desteği
-- 🎨 **Tema Desteği**: Açık, koyu ve sistem teması
+- 🎯 **Real-time Transcription** - Live audio transcription using Whisper AI
+- 🌍 **Multi-language Support** - Turkish, English, and auto-detection
+- 🎤 **Advanced Audio Capture** - Both microphone and system audio
+- 🔊 **Device Selection** - Choose your preferred input/output devices
+- 🤖 **AI Reports** - Generate meeting summaries with Notlok AI or Gemini
+- 📝 **Recording History** - Save and review past transcriptions
+- 🔄 **Auto-updates** - Seamless update system
+- 🔐 **License Management** - Secure licensing with LemonSqueezy
+- 🎨 **Theme Support** - Light, dark, and system themes
 
-### 🔒 Gizlilik ve Güvenlik
-- ✅ Tüm işlemler **yerel cihazda** gerçekleşir
-- ✅ Veriler **internet üzerinden paylaşılmaz**
-- ✅ Kayıtlarınız **sadece size aittir**
-- ✅ AI işlemleri **cihazınızda** çalışır
+## 🚀 Quick Start
 
----
+### Prerequisites
 
-## 🚀 Hızlı Başlangıç
+- macOS 13.0+ (Apple Silicon or Intel)
+- Windows 10+ (coming soon via GitHub Actions)
+- Microphone and/or system audio access
 
-### Gereksinimler
-- **macOS**: 10.15 (Catalina) veya üzeri
-- **Windows**: 10 (1809) veya üzeri
-- 4 GB RAM (minimum), 8 GB RAM (önerilen)
-- 5 GB boş disk alanı (AI modelleri için)
+### Installation
 
-### Kurulum
+1. Download the latest release from [Releases](https://github.com/unkownpr/Notlok/releases)
+2. Install the app:
+   - **macOS**: Open the `.dmg` file and drag to Applications
+   - **Windows**: Run the `.msi` or `.exe` installer
+3. Launch Notlok
+4. Enter your license key (get one at [notlok.app](https://notlok.app))
+5. Grant microphone and screen recording permissions
+6. Download your preferred Whisper model
+7. Start recording! 🎉
 
-#### macOS
-```bash
-# DMG dosyasını indirin
-# Notlok.app'i Applications klasörüne sürükleyin
-# İlk açılışta "Open" butonuna tıklayın
-```
+## 🛠️ Development
 
-#### Windows
-```bash
-# MSI dosyasını indirin
-# Kurulum sihirbazını takip edin
-# Uygulamayı başlatın
-```
-
-### İlk Kullanım
-
-1. **Lisans Aktivasyonu**
-   - Uygulamayı başlatın
-   - Email ve lisans anahtarınızı girin
-   - "Aktifleştir" butonuna tıklayın
-
-2. **İzinleri Verin**
-   - macOS: Screen Recording ve Microphone izinleri
-   - Windows: Mikrofonizin çalıştığından emin olun
-
-3. **Model İndirin**
-   - Settings > Model seçin (Whisper Base önerilir)
-   - "İndir" butonuna tıklayın
-   - Model indirildikten sonra "Yükle" butonuna tıklayın
-
-4. **Kayda Başlayın**
-   - "Kayda Başla" butonuna tıklayın
-   - Sesli notunuzu kaydedin
-   - "Kaydı Durdur" ile bitirin
-   - Transkript otomatik oluşturulacak
-
----
-
-## 🛠️ Geliştirici Kurulumu
-
-### Gereksinimler
-- Node.js 18+
-- Rust (latest stable)
-- Xcode (macOS) veya Visual Studio 2022 (Windows)
-
-### Kurulum
+### Setup
 
 ```bash
-# Repository'i klonlayın
-git clone https://github.com/ssilistre/notlok.git
-cd notlok
+# Clone the repository
+git clone https://github.com/unkownpr/Notlok.git
+cd Notlok
 
-# Dependencies'i yükleyin
+# Install dependencies
 npm install
 
-# Development modunda çalıştırın
-npm run tauri:dev
+# Run in development mode
+npm run tauri dev
 ```
 
 ### Build
 
 ```bash
-# Hızlı build (mevcut platform)
-npm run tauri:build
+# Build for your current platform
+npm run tauri build
 
-# macOS Apple Silicon
-npm run tauri:build:mac:arm
-
-# macOS Intel
-npm run tauri:build:mac:intel
-
-# macOS Universal
-npm run tauri:build:mac:universal
-
-# Windows
-npm run tauri:build:windows
-
-# Script ile tüm platformlar
-./scripts/build-all.sh        # macOS/Linux
-.\scripts\build-all.ps1       # Windows
+# For multi-platform builds, see GITHUB_ACTIONS_GUIDE.md
 ```
 
-Detaylı build ve dağıtım bilgileri için [BUILD_AND_DEPLOY.md](BUILD_AND_DEPLOY.md) dosyasına bakın.
+## 📦 Project Structure
 
----
+```
+notlok/
+├── src/                    # React frontend
+│   ├── App.tsx            # Main application
+│   ├── App.css            # Styles
+│   └── utils/             # Utilities
+├── src-tauri/             # Rust backend
+│   ├── src/
+│   │   ├── audio_capture/ # Audio recording
+│   │   ├── transcription/ # Whisper integration
+│   │   └── lib.rs         # Main Tauri code
+│   └── swift/             # macOS Swift code
+└── .github/workflows/     # CI/CD automation
+```
 
-## 📚 Dokümantasyon
+## 🤝 Contributing
 
-- [Build ve Dağıtım Kılavuzu](BUILD_AND_DEPLOY.md)
-- [Changelog](CHANGELOG.md)
-- [API Dokümantasyonu](docs/API.md) _(yakında)_
-- [Kullanım Kılavuzu](docs/USER_GUIDE.md) _(yakında)_
+Contributions are welcome! Please feel free to submit a Pull Request.
 
----
+## 📄 License
 
-## 🏗️ Teknoloji Stack
+This project requires a valid license key to use. Get yours at [notlok.app](https://notlok.app)
 
-### Frontend
-- **React 19** - UI framework
-- **TypeScript** - Type safety
-- **Vite** - Build tool
-- **TailwindCSS** - Styling _(upcoming)_
+## 🔗 Links
 
-### Backend
-- **Rust** - Core logic
-- **Tauri 2** - Desktop framework
-- **Whisper.cpp** - AI transcription
-- **ScreenCaptureKit** - System audio capture (macOS)
+- **Website**: [notlok.app](https://notlok.app)
+- **Issues**: [GitHub Issues](https://github.com/unkownpr/Notlok/issues)
+- **Developer**: [ssilistre.dev](https://ssilistre.dev)
 
-### AI Models
-- **Whisper** (Tiny, Base, Small, Medium, Large V3)
-- **Parakeet** (CTC 0.6B, TDT 0.6B)
-- **Gemini AI** - Cloud AI support
+## 🙏 Acknowledgments
 
----
-
-## 🎯 Roadmap
-
-### v0.2.0 (Planlanan)
-- [ ] Otomatik güncelleme sistemi
-- [ ] Linux desteği
-- [ ] Özel AI prompt şablonları
-- [ ] Export özelliği (PDF, DOCX, TXT)
-- [ ] Transkript düzenleme
-
-### v0.3.0 (Uzun vadeli)
-- [ ] Gerçek zamanlı transkripsiyon
-- [ ] Çoklu konuşmacı tanıma
-- [ ] Sesli not analitikleri
-- [ ] Cloud sync (opsiyonel)
-- [ ] Browser extension
-
-Tüm değişiklikler için [CHANGELOG.md](CHANGELOG.md) dosyasına bakın.
-
----
-
-## 🤝 Katkıda Bulunma
-
-Şu anda private repository olduğu için katkılar kabul edilmemektedir. Gelecekte açık kaynak olabilir.
-
----
-
-## 📄 Lisans
-
-Bu proje proprietary lisans altındadır. Kullanım için geçerli bir lisans anahtarı gereklidir.
-
-Lisans satın almak için: [https://notlok.app](https://notlok.app)
-
----
-
-## 🙋 Destek
-
-### Sorunlar ve Öneriler
-- 🌐 Web: [https://notlok.app](https://notlok.app)
-- 📧 Email: support@notlok.app
-- 💬 GitHub Issues: [github.com/ssilistre/notlok/issues](https://github.com/ssilistre/notlok/issues)
-
-### Sıkça Sorulan Sorular
-
-**Q: Sistem sesini nasıl kaydediyor?**  
-A: macOS'ta ScreenCaptureKit API kullanıyoruz. BlackHole veya loopback device gerekmez.
-
-**Q: İnternet bağlantısı gerekli mi?**  
-A: Sadece lisans aktivasyonu ve AI rapor oluşturma için. Transkripsiyon tamamen offline çalışır.
-
-**Q: AI modelleri ne kadar yer kaplıyor?**  
-A: Whisper Base ~142 MB, Whisper Large V3 ~3.1 GB. İhtiyacınıza göre seçebilirsiniz.
-
-**Q: Verilerim güvende mi?**  
-A: Evet! Tüm kayıtlar ve işlemler yerel cihazınızda kalır.
-
----
-
-## 👨‍💻 Geliştirici
-
-**ssilistre.dev**
-- 🌐 Web: [https://ssilistre.dev](https://ssilistre.dev)
-- 💼 LinkedIn: [linkedin.com/in/ssilistre](https://linkedin.com/in/ssilistre)
-- 🐦 Twitter: [@ssilistre](https://twitter.com/ssilistre)
-
----
-
-## 🙏 Teşekkürler
-
-- [Tauri](https://tauri.app/) - Harika desktop framework
-- [Whisper.cpp](https://github.com/ggerganov/whisper.cpp) - Yerel AI transkripsiyon
-- [Lemon Squeezy](https://lemonsqueezy.com/) - Lisans yönetimi
+- [Whisper AI](https://github.com/openai/whisper) - Speech recognition
+- [Tauri](https://tauri.app/) - Desktop app framework
 - [React](https://react.dev/) - UI framework
 
 ---
 
-<div align="center">
-
-**[Notlok](https://notlok.app)** - Sesli Notlarınızı AI ile Yönetin
-
-Powered by [ssilistre.dev](https://ssilistre.dev)
-
-</div>
+Made with ❤️ by [ssilistre.dev](https://ssilistre.dev)
