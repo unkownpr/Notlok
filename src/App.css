@@ -889,8 +889,8 @@ textarea:focus {
 .small-spinner {
   width: 16px;
   height: 16px;
-  border: 2px solid #ccc;
-  border-top-color: #000;
+  border: 2px solid var(--border-color);
+  border-top-color: var(--primary-color);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
@@ -900,10 +900,11 @@ textarea:focus {
   align-items: center;
   gap: 0.5rem;
   padding: 0.75rem;
-  background: #f5f5f7;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
   border-radius: 8px;
   font-size: 0.875rem;
-  color: #666;
+  color: var(--text-secondary);
   margin-top: 0.5rem;
 }
 
@@ -1662,15 +1663,7 @@ textarea:focus {
   color: #ffd54f;
 }
 
-:root[data-theme="dark"] .model-loading-indicator {
-  background: #1a1a1a;
-  color: #888;
-}
-
-:root[data-theme="dark"] .small-spinner {
-  border-color: #333;
-  border-top-color: #fff;
-}
+/* model-loading-indicator now uses CSS variables automatically */
 
 :root[data-theme="dark"] .version-info {
   background: #2a2a2a;
@@ -2213,4 +2206,59 @@ textarea:focus {
 :root[data-theme="light"] .btn:disabled:hover {
   background: #f5f5f5;
   color: #000;
+}
+
+/* App Footer */
+.app-footer {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  justify-content: center;
+  opacity: 0.7;
+}
+
+.footer-links {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.footer-separator {
+  color: var(--text-secondary);
+  opacity: 0.5;
+}
+
+.footer-link {
+  color: var(--primary-color);
+  text-decoration: none;
+  transition: opacity 0.2s ease;
+  font-weight: 500;
+}
+
+.footer-link:hover {
+  opacity: 0.8;
+  text-decoration: underline;
+}
+
+.footer-powered {
+  color: var(--text-secondary);
+}
+
+.footer-link.powered {
+  font-weight: 600;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.footer-link.powered:hover {
+  opacity: 1;
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }

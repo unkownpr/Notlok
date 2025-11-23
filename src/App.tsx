@@ -1541,6 +1541,32 @@ function App() {
               placeholder={t.transcriptPlaceholder}
             />
           </div>
+
+          {/* Footer */}
+          <div className="app-footer">
+            <div className="footer-links">
+              <a 
+                href="https://notlok.app" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="footer-link"
+              >
+                notlok.app
+              </a>
+              <span className="footer-separator">•</span>
+              <span className="footer-powered">
+                Powered by{' '}
+                <a 
+                  href="https://ssilistre.dev" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="footer-link powered"
+                >
+                  ssilistre.dev
+                </a>
+              </span>
+            </div>
+          </div>
         </>
       )}
 
@@ -1877,6 +1903,23 @@ function App() {
                   <label>{t.expiresAt}:</label>
                   <span>{licenseInfo.expiresAt ? new Date(licenseInfo.expiresAt).toLocaleDateString() : t.never}</span>
                 </div>
+                <button
+                  onClick={() => {
+                    if (confirm(uiLanguage === 'tr' 
+                      ? 'Lisansınızı kaldırmak istediğinizden emin misiniz? Uygulamayı kullanmaya devam etmek için yeniden lisans girmeniz gerekecek.' 
+                      : 'Are you sure you want to remove your license? You will need to enter a license again to continue using the app.')) {
+                      localStorage.removeItem("notlok-license-key");
+                      setLicenseInfo(null);
+                      setLicenseKey("");
+                      setUserEmail("");
+                      setLicenseError("");
+                    }
+                  }}
+                  className="btn secondary"
+                  style={{ marginTop: '1rem' }}
+                >
+                  {uiLanguage === 'tr' ? '🗑️ Lisansı Kaldır' : '🗑️ Remove License'}
+                </button>
               </div>
             ) : (
               <div className="license-activation">
