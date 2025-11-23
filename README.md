@@ -6,6 +6,10 @@ Notlok is a cross-platform desktop application that provides real-time audio tra
 
 ![Notlok Banner](public/icon.png)
 
+> **⚠️ PROPRIETARY SOFTWARE**  
+> This is a commercial product requiring a valid license key.  
+> Get your license at [notlok.app](https://notlok.app)
+
 ## ✨ Features
 
 - 🎯 **Real-time Transcription** - Live audio transcription using Whisper AI
@@ -86,7 +90,18 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## 📄 License
 
-This project requires a valid license key to use. Get yours at [notlok.app](https://notlok.app)
+**This is proprietary software - NOT open source.**
+
+Notlok is a commercial product that requires a valid license key to use. The source code is available for reference and contributions, but you may NOT:
+
+- ❌ Use this software without a valid license
+- ❌ Redistribute or sell copies
+- ❌ Remove or modify license checks
+- ❌ Create derivative commercial products
+
+✅ You MAY contribute improvements via Pull Requests
+
+**Get your license key at [notlok.app](https://notlok.app)**
 
 ## 🔗 Links
 
