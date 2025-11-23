@@ -1,74 +1,21 @@
-NOTLOK PROPRIETARY LICENSE
+MIT License
 
-Copyright (c) 2024 Notlok / ssilistre.dev
-All rights reserved.
+Copyright (c) 2025 Süleyman Silistre (ssilistre.dev)
 
-IMPORTANT: This is proprietary software, NOT open source.
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
 
-1. LICENSE REQUIREMENT
-   This software requires a valid commercial license key purchased from
-   notlok.app to use. The software will not function without a valid license.
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
 
-2. PERMITTED USES
-   With a valid license, you may:
-   - Install and use the software on devices as specified by your license
-   - View the source code for reference purposes
-   - Submit bug reports and feature requests
-   - Contribute improvements via Pull Requests (which become property of Notlok)
-
-3. PROHIBITED USES
-   You may NOT:
-   - Use this software without purchasing a valid license
-   - Redistribute, sublicense, or sell copies of this software
-   - Remove, modify, or bypass license validation mechanisms
-   - Reverse engineer or decompile the software
-   - Create derivative works for commercial purposes
-   - Use the code or concepts in competing products
-   - Share license keys with unauthorized users
-
-4. SOURCE CODE AVAILABILITY
-   The source code is made available for:
-   - Transparency and trust
-   - Security auditing
-   - Community contributions
-   - Educational purposes
-   
-   Source code availability does NOT grant usage rights without a license.
-
-5. CONTRIBUTIONS
-   By submitting a Pull Request, you agree that:
-   - Your contribution becomes property of Notlok
-   - Your contribution may be used in commercial versions
-   - You waive any claims to compensation for contributions
-   - You have the right to make the contribution
-
-6. NO WARRANTY
-   This software is provided "AS IS" without warranty of any kind, express or
-   implied, including but not limited to the warranties of merchantability,
-   fitness for a particular purpose and noninfringement.
-
-7. LIMITATION OF LIABILITY
-   In no event shall the authors or copyright holders be liable for any claim,
-   damages or other liability, whether in an action of contract, tort or
-   otherwise, arising from, out of or in connection with the software or the
-   use or other dealings in the software.
-
-8. TERMINATION
-   This license is effective until terminated. Your rights under this license
-   will terminate automatically without notice if you fail to comply with any
-   of its terms. Upon termination, you must destroy all copies of the software.
-
-9. GOVERNING LAW
-   This license shall be governed by and construed in accordance with the laws
-   of Turkey, without regard to its conflict of law provisions.
-
-10. ENTIRE AGREEMENT
-    This license constitutes the entire agreement between you and Notlok
-    concerning the software and supersedes all prior or contemporaneous
-    understandings regarding such subject matter.
-
-For questions about licensing, contact: https://notlok.app
-For purchase and license activation: https://notlok.app
-
-Last updated: November 2024
-
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT
+SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
