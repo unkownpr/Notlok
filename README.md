@@ -3,9 +3,9 @@
 **Real-time audio transcription app powered by Whisper AI**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![GitHub release](https://img.shields.io/github/v/release/unkownpr/Notlok)](https://github.com/unkownpr/Notlok/releases)
-[![Build Status](https://github.com/unkownpr/Notlok/actions/workflows/build.yml/badge.svg)](https://github.com/unkownpr/Notlok/actions)
-[![GitHub stars](https://img.shields.io/github/stars/unkownpr/Notlok?style=social)](https://github.com/unkownpr/Notlok)
+[![GitHub release](https://img.shields.io/github/v/release/unkownpr/notlok-app)](https://github.com/unkownpr/notlok-app/releases)
+[![Build Status](https://github.com/unkownpr/notlok-app/actions/workflows/build.yml/badge.svg)](https://github.com/unkownpr/notlok-app/actions)
+[![GitHub stars](https://img.shields.io/github/stars/unkownpr/notlok-app?style=social)](https://github.com/unkownpr/notlok-app)
 
 Notlok is an **open-source** cross-platform desktop application that provides real-time audio transcription with support for multiple languages, AI-powered meeting summaries, and advanced audio device management.
 
@@ -75,7 +75,7 @@ We believe in the power of community and transparency! By open-sourcing Notlok, 
 
 ### Installation
 
-1. Download the latest release from [Releases](https://github.com/unkownpr/Notlok/releases)
+1. Download the latest release from [Releases](https://github.com/unkownpr/notlok-app/releases)
 2. Install the app:
    - **macOS**: Open the `.dmg` file and drag to Applications
    - **Windows**: Run the `.msi` installer
@@ -94,8 +94,8 @@ Want unlimited features? Get a premium license at [notlok.app](https://notlok.ap
 
 ```bash
 # Clone the repository
-git clone https://github.com/unkownpr/Notlok.git
-cd Notlok
+git clone https://github.com/unkownpr/notlok-app.git
+cd notlok-app
 
 # Install dependencies
 npm install
@@ -154,7 +154,7 @@ notlok/
 - [ ] Plugins/Extensions system
 - [ ] Mobile companion app
 
-**Want to contribute?** Check the [Issues](https://github.com/unkownpr/Notlok/issues) page!
+**Want to contribute?** Check the [Issues](https://github.com/unkownpr/notlok-app/issues) page!
 
 ## 🤝 Contributing
 
@@ -196,16 +196,16 @@ See the [LICENSE](LICENSE) file for full details.
 
 ## 🔗 Links
 
-- **GitHub**: [github.com/unkownpr/Notlok](https://github.com/unkownpr/Notlok)
-- **Issues**: [Report a Bug](https://github.com/unkownpr/Notlok/issues)
-- **Releases**: [Download Latest](https://github.com/unkownpr/Notlok/releases)
+- **GitHub**: [github.com/unkownpr/notlok-app](https://github.com/unkownpr/notlok-app)
+- **Issues**: [Report a Bug](https://github.com/unkownpr/notlok-app/issues)
+- **Releases**: [Download Latest](https://github.com/unkownpr/notlok-app/releases)
 - **Developer**: [ssilistre.dev](https://ssilistre.dev)
 
 ## ⭐ Star History
 
 If you find Notlok useful, please consider giving it a star on GitHub! It helps others discover the project.
 
-[![Star History Chart](https://api.star-history.com/svg?repos=unkownpr/Notlok&type=Date)](https://star-history.com/#unkownpr/Notlok&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=unkownpr/notlok-app&type=Date)](https://star-history.com/#unkownpr/notlok-app&Date)
 
 ## 🙏 Acknowledgments
 
