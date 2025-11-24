@@ -1,0 +1,17 @@
+# Auto detect text files and perform LF normalization
+* text=auto
+
+# Language statistics override
+*.ts linguist-detectable=true
+*.tsx linguist-detectable=true
+*.rs linguist-detectable=true
+*.css linguist-detectable=true
+*.html linguist-detectable=true
+
+# Exclude from statistics
+public/* linguist-vendored
+dist/* linguist-generated
+src-tauri/target/* linguist-generated
+node_modules/* linguist-vendored
+*.md linguist-documentation
+
