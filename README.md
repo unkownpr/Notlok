@@ -205,7 +205,7 @@ See the [LICENSE](LICENSE) file for full details.
 
 If you find Notlok useful, please consider giving it a star on GitHub! It helps others discover the project.
 
-[![Star History Chart](https://api.star-history.com/svg?repos=unkownpr/Notlok&type=Date)](https://star-history.com/#unkownpr/Notlok&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=unkownpr/Notlok&type=date&legend=top-left)](https://www.star-history.com/#unkownpr/Notlok&type=date&legend=top-left)
 
 ## 🙏 Acknowledgments
 
