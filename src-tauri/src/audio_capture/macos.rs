@@ -67,11 +67,11 @@ fn capture_system_audio(
 
             if current_index > last_index {
                 // Copy new samples to shared buffer
-                let new_samples = current_index - last_index;
+                let _new_samples = current_index - last_index;
                 
                 // Log every 5 seconds worth of samples (~80000 samples at 16kHz)
                 #[cfg(debug_assertions)]
-                if current_index % 80000 < new_samples {
+                if current_index % 80000 < _new_samples {
                     println!("📊 System audio progress: {} samples collected", current_index);
                 }
                 
