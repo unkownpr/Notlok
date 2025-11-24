@@ -6,6 +6,9 @@ on:
       - 'v*'
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
     strategy:
@@ -77,13 +80,57 @@ jobs:
             src-tauri/target/release/bundle/msi/*.msi
             src-tauri/target/release/bundle/nsis/*.exe
 
-  # Release job disabled - create releases manually from Artifacts
-  # GitHub Actions doesn't have permission to create releases by default
-  # 
-  # To create a release:
-  # 1. Go to Actions → Completed workflow
-  # 2. Download artifacts (macos-aarch64, windows-x64)
-  # 3. Go to Releases → Draft a new release
-  # 4. Upload the downloaded files
-  # 5. Publish release
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Display structure of downloaded files
+        run: ls -R artifacts
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            artifacts/**/*.dmg
+            artifacts/**/*.app.tar.gz
+            artifacts/**/*.msi
+            artifacts/**/*.exe
+          body: |
+            ## 🎉 Notlok ${{ github.ref_name }}
+            
+            ### 🆓 Free Features:
+            - ✅ 1-minute voice recording
+            - ✅ Real-time transcription
+            - ✅ Multiple languages support
+            
+            ### 💎 Premium Features:
+            - ✅ Unlimited recording
+            - ✅ Recording history
+            - ✅ AI-powered reports
+            - ✅ Automatic updates
+            
+            ### 📥 Downloads:
+            - **macOS (Apple Silicon)**: Download `.dmg` file
+            - **Windows**: Download `.msi` or `.exe` file
+            
+            ### 🔑 Get Premium License:
+            Visit [notlok.app](https://notlok.app) to upgrade!
+            
+            ---
+            
+            **Full Changelog**: https://github.com/unkownpr/notlok-app/commits/${{ github.ref_name }}
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
