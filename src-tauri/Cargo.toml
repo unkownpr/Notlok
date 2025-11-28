@@ -1,6 +1,6 @@
 [package]
 name = "notlok"
-version = "2.0.5"
+version = "2.0.6"
 description = "Notlok - AI Destekli Sesli Not Uygulaması / AI-powered Voice Note App"
 authors = ["ssilistre"]
 edition = "2021"
