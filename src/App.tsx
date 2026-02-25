@@ -75,6 +75,7 @@ const translations = {
     openrouterApiKey: "OpenRouter API Anahtarı",
     enterOpenRouterKey: "OpenRouter API anahtarınızı girin",
     selectModel: "Model Seç",
+    searchModel: "Model ara...",
     fetchingModels: "Modeller yükleniyor...",
     noModelsFound: "Model bulunamadı",
     enterKeyFirst: "Önce API anahtarı girin",
@@ -179,6 +180,7 @@ const translations = {
     openrouterApiKey: "OpenRouter API Key",
     enterOpenRouterKey: "Enter your OpenRouter API key",
     selectModel: "Select Model",
+    searchModel: "Search model...",
     fetchingModels: "Loading models...",
     noModelsFound: "No models found",
     enterKeyFirst: "Enter API key first",
@@ -357,6 +359,8 @@ function App() {
     return localStorage.getItem("notlok-gemini-model") || "";
   });
   const [isFetchingModels, setIsFetchingModels] = useState(false);
+  const [modelSearch, setModelSearch] = useState("");
+  const [modelSearchOpen, setModelSearchOpen] = useState(false);
   const [customPrompt, setCustomPrompt] = useState(() => {
     return localStorage.getItem("notlok-custom-prompt") || "";
   });
@@ -453,6 +457,8 @@ function App() {
   // Save AI settings to localStorage
   useEffect(() => {
     localStorage.setItem("notlok-ai-provider", aiProvider);
+    setModelSearch("");
+    setModelSearchOpen(false);
   }, [aiProvider]);
 
   useEffect(() => {
@@ -1416,15 +1422,62 @@ function App() {
                   {isFetchingModels ? (
                     <span style={{ opacity: 0.6, fontSize: "0.9rem" }}>{t.fetchingModels}</span>
                   ) : openrouterModels.length > 0 ? (
-                    <select
-                      value={selectedOpenrouterModel}
-                      onChange={(e) => setSelectedOpenrouterModel(e.target.value)}
-                      disabled={isGenerating}
-                    >
-                      {openrouterModels.map((m) => (
-                        <option key={m.id} value={m.id}>{m.name}</option>
-                      ))}
-                    </select>
+                    <div style={{ position: "relative", flex: 1 }}>
+                      <input
+                        type="text"
+                        value={modelSearch}
+                        onChange={(e) => { setModelSearch(e.target.value); setModelSearchOpen(true); }}
+                        onFocus={() => setModelSearchOpen(true)}
+                        onBlur={() => setTimeout(() => setModelSearchOpen(false), 150)}
+                        placeholder={
+                          selectedOpenrouterModel
+                            ? (openrouterModels.find(m => m.id === selectedOpenrouterModel)?.name || selectedOpenrouterModel)
+                            : t.searchModel
+                        }
+                        className="api-key-input"
+                        style={{ width: "100%" }}
+                        disabled={isGenerating}
+                      />
+                      {modelSearchOpen && (
+                        <div style={{
+                          position: "absolute", top: "calc(100% + 4px)", left: 0, right: 0,
+                          maxHeight: "220px", overflowY: "auto", zIndex: 100,
+                          background: "var(--card-bg, #1a1a2e)", border: "1px solid var(--border, #333)",
+                          borderRadius: "8px", boxShadow: "0 4px 16px rgba(0,0,0,0.3)",
+                        }}>
+                          {openrouterModels
+                            .filter(m =>
+                              !modelSearch.trim() ||
+                              m.name.toLowerCase().includes(modelSearch.toLowerCase()) ||
+                              m.id.toLowerCase().includes(modelSearch.toLowerCase())
+                            )
+                            .map(m => (
+                              <div
+                                key={m.id}
+                                onMouseDown={() => { setSelectedOpenrouterModel(m.id); setModelSearch(""); setModelSearchOpen(false); }}
+                                style={{
+                                  padding: "8px 12px", cursor: "pointer", fontSize: "0.88rem",
+                                  background: m.id === selectedOpenrouterModel ? "var(--accent, #667eea22)" : "transparent",
+                                  borderLeft: m.id === selectedOpenrouterModel ? "3px solid var(--accent, #667eea)" : "3px solid transparent",
+                                }}
+                                onMouseEnter={e => (e.currentTarget.style.background = "var(--hover, #ffffff11)")}
+                                onMouseLeave={e => (e.currentTarget.style.background = m.id === selectedOpenrouterModel ? "var(--accent, #667eea22)" : "transparent")}
+                              >
+                                <div style={{ fontWeight: 500 }}>{m.name}</div>
+                                <div style={{ opacity: 0.5, fontSize: "0.78rem" }}>{m.id}</div>
+                              </div>
+                            ))
+                          }
+                          {openrouterModels.filter(m =>
+                            !modelSearch.trim() ||
+                            m.name.toLowerCase().includes(modelSearch.toLowerCase()) ||
+                            m.id.toLowerCase().includes(modelSearch.toLowerCase())
+                          ).length === 0 && (
+                            <div style={{ padding: "10px 12px", opacity: 0.5, fontSize: "0.88rem" }}>{t.noModelsFound}</div>
+                          )}
+                        </div>
+                      )}
+                    </div>
                   ) : (
                     <span style={{ opacity: 0.5, fontSize: "0.9rem" }}>
                       {openrouterApiKey.trim() ? t.noModelsFound : t.enterKeyFirst}
@@ -1453,15 +1506,62 @@ function App() {
                   {isFetchingModels ? (
                     <span style={{ opacity: 0.6, fontSize: "0.9rem" }}>{t.fetchingModels}</span>
                   ) : geminiModels.length > 0 ? (
-                    <select
-                      value={selectedGeminiModel}
-                      onChange={(e) => setSelectedGeminiModel(e.target.value)}
-                      disabled={isGenerating}
-                    >
-                      {geminiModels.map((m) => (
-                        <option key={m.id} value={m.id}>{m.name}</option>
-                      ))}
-                    </select>
+                    <div style={{ position: "relative", flex: 1 }}>
+                      <input
+                        type="text"
+                        value={modelSearch}
+                        onChange={(e) => { setModelSearch(e.target.value); setModelSearchOpen(true); }}
+                        onFocus={() => setModelSearchOpen(true)}
+                        onBlur={() => setTimeout(() => setModelSearchOpen(false), 150)}
+                        placeholder={
+                          selectedGeminiModel
+                            ? (geminiModels.find(m => m.id === selectedGeminiModel)?.name || selectedGeminiModel)
+                            : t.searchModel
+                        }
+                        className="api-key-input"
+                        style={{ width: "100%" }}
+                        disabled={isGenerating}
+                      />
+                      {modelSearchOpen && (
+                        <div style={{
+                          position: "absolute", top: "calc(100% + 4px)", left: 0, right: 0,
+                          maxHeight: "220px", overflowY: "auto", zIndex: 100,
+                          background: "var(--card-bg, #1a1a2e)", border: "1px solid var(--border, #333)",
+                          borderRadius: "8px", boxShadow: "0 4px 16px rgba(0,0,0,0.3)",
+                        }}>
+                          {geminiModels
+                            .filter(m =>
+                              !modelSearch.trim() ||
+                              m.name.toLowerCase().includes(modelSearch.toLowerCase()) ||
+                              m.id.toLowerCase().includes(modelSearch.toLowerCase())
+                            )
+                            .map(m => (
+                              <div
+                                key={m.id}
+                                onMouseDown={() => { setSelectedGeminiModel(m.id); setModelSearch(""); setModelSearchOpen(false); }}
+                                style={{
+                                  padding: "8px 12px", cursor: "pointer", fontSize: "0.88rem",
+                                  background: m.id === selectedGeminiModel ? "var(--accent, #667eea22)" : "transparent",
+                                  borderLeft: m.id === selectedGeminiModel ? "3px solid var(--accent, #667eea)" : "3px solid transparent",
+                                }}
+                                onMouseEnter={e => (e.currentTarget.style.background = "var(--hover, #ffffff11)")}
+                                onMouseLeave={e => (e.currentTarget.style.background = m.id === selectedGeminiModel ? "var(--accent, #667eea22)" : "transparent")}
+                              >
+                                <div style={{ fontWeight: 500 }}>{m.name}</div>
+                                <div style={{ opacity: 0.5, fontSize: "0.78rem" }}>{m.id}</div>
+                              </div>
+                            ))
+                          }
+                          {geminiModels.filter(m =>
+                            !modelSearch.trim() ||
+                            m.name.toLowerCase().includes(modelSearch.toLowerCase()) ||
+                            m.id.toLowerCase().includes(modelSearch.toLowerCase())
+                          ).length === 0 && (
+                            <div style={{ padding: "10px 12px", opacity: 0.5, fontSize: "0.88rem" }}>{t.noModelsFound}</div>
+                          )}
+                        </div>
+                      )}
+                    </div>
                   ) : (
                     <span style={{ opacity: 0.5, fontSize: "0.9rem" }}>
                       {geminiApiKey.trim() ? t.noModelsFound : t.enterKeyFirst}
