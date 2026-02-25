@@ -2,7 +2,7 @@ mod audio_capture;
 mod transcription;
 
 use audio_capture::{AudioRecorder, AudioDevice};
-use transcription::{TranscriberModel, WhisperTranscriber, ParakeetTranscriber};
+use transcription::{TranscriberModel, WhisperTranscriber};
 use std::sync::Mutex;
 use std::path::PathBuf;
 use tauri::{State, AppHandle, Manager, Emitter};
@@ -84,21 +84,6 @@ fn get_available_models() -> Vec<ModelInfo> {
             quality: "En iyi kalite".to_string(),
             url: "https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-large-v3.bin".to_string(),
         },
-        // Parakeet Models
-        ModelInfo {
-            id: "parakeet-ctc-0.6b".to_string(),
-            name: "Parakeet CTC 0.6B (English)".to_string(),
-            size: "360 MB".to_string(),
-            quality: "Hızlı, İngilizce".to_string(),
-            url: "https://github.com/k2-fsa/sherpa-onnx/releases/download/v1.9.23/sherpa-onnx-nemo-parakeet-ctc-0.6b-en-2024-03-04.tar.bz2".to_string(),
-        },
-        ModelInfo {
-            id: "parakeet-tdt-0.6b".to_string(),
-            name: "Parakeet TDT 0.6B (Multilingual)".to_string(),
-            size: "380 MB".to_string(),
-            quality: "Çok Dilli, İyi Kalite".to_string(),
-            url: "https://github.com/k2-fsa/sherpa-onnx/releases/download/v1.9.23/sherpa-onnx-nemo-parakeet-tdt-0.6b-v3-int8.tar.bz2".to_string(),
-        },
     ]
 }
 
@@ -116,24 +101,8 @@ fn get_models_dir(app: &AppHandle) -> PathBuf {
 
 fn get_model_path(app: &AppHandle, model_id: &str) -> PathBuf {
     let models_dir = get_models_dir(app);
-    if model_id.starts_with("whisper-") {
-        let whisper_id = model_id.strip_prefix("whisper-").unwrap();
-        models_dir.join(format!("ggml-{}.bin", whisper_id))
-    } else if model_id.starts_with("parakeet-") {
-        // For Parakeet models, the path might be a directory containing the ONNX files
-        // We assume the model_id corresponds to a directory name after extraction
-        models_dir.join(model_id)
-    } else {
-        models_dir.join(model_id)
-    }
-}
-
-fn is_whisper_model(model_id: &str) -> bool {
-    model_id.starts_with("whisper-")
-}
-
-fn is_parakeet_model(model_id: &str) -> bool {
-    model_id.starts_with("parakeet-")
+    let whisper_id = model_id.strip_prefix("whisper-").unwrap_or(model_id);
+    models_dir.join(format!("ggml-{}.bin", whisper_id))
 }
 
 #[tauri::command]
@@ -179,98 +148,29 @@ async fn download_model(app: AppHandle, model_id: String) -> Result<String, Stri
     let response = reqwest::get(&model.url).await.map_err(|e| e.to_string())?;
     let total_size = response.content_length().unwrap_or(0);
 
-    // Check if it's an archive
-    let is_tar_bz2 = model.url.ends_with(".tar.bz2");
+    let mut file = std::fs::File::create(&target_path).map_err(|e| e.to_string())?;
+    let mut downloaded: u64 = 0;
+    let mut stream = response.bytes_stream();
 
-    if is_tar_bz2 {
-        // For archives, we download to a temp file first
-        let temp_path = models_dir.join(format!("{}.tmp", model_id));
-        let mut file = std::fs::File::create(&temp_path).map_err(|e| e.to_string())?;
-        let mut downloaded: u64 = 0;
-        let mut stream = response.bytes_stream();
+    use futures_util::StreamExt;
+    use std::io::Write;
 
-        use futures_util::StreamExt;
-        use std::io::Write;
+    while let Some(chunk) = stream.next().await {
+        let chunk = chunk.map_err(|e| e.to_string())?;
+        file.write_all(&chunk).map_err(|e| e.to_string())?;
+        downloaded += chunk.len() as u64;
 
-        while let Some(chunk) = stream.next().await {
-            let chunk = chunk.map_err(|e| e.to_string())?;
-            file.write_all(&chunk).map_err(|e| e.to_string())?;
-            downloaded += chunk.len() as u64;
-
-            let progress = if total_size > 0 {
-                (downloaded as f64 / total_size as f64) * 100.0
-            } else {
-                0.0
-            };
-            let _ = app.emit("download-progress", DownloadProgress {
-                model_id: model_id.clone(),
-                progress,
-                downloaded,
-                total: total_size,
-            });
-        }
-        
-        // Extract
-        let file = std::fs::File::open(&temp_path).map_err(|e| e.to_string())?;
-        let decoder = bzip2::read::BzDecoder::new(file);
-        let mut archive = tar::Archive::new(decoder);
-        
-        // Extract to models_dir
-        archive.unpack(&models_dir).map_err(|e| e.to_string())?;
-        
-        // Cleanup temp file
-        std::fs::remove_file(temp_path).map_err(|e| e.to_string())?;
-        
-        // Rename extracted folder to model_id if necessary
-        // We know the expected folder names from URLs:
-        // parakeet-ctc-0.6b -> sherpa-onnx-nemo-parakeet-ctc-0.6b-en-2024-03-04
-        // parakeet-tdt-0.6b -> sherpa-onnx-nemo-parakeet-tdt-0.6b-v3-int8
-        
-        let expected_folder_name = if model_id == "parakeet-ctc-0.6b" {
-            "sherpa-onnx-nemo-parakeet-ctc-0.6b-en-2024-03-04"
-        } else if model_id == "parakeet-tdt-0.6b" {
-            "sherpa-onnx-nemo-parakeet-tdt-0.6b-v3-int8"
+        let progress = if total_size > 0 {
+            (downloaded as f64 / total_size as f64) * 100.0
         } else {
-            ""
+            0.0
         };
-        
-        if !expected_folder_name.is_empty() {
-            let extracted_path = models_dir.join(expected_folder_name);
-            let final_path = models_dir.join(&model_id);
-            if extracted_path.exists() && extracted_path != final_path {
-                if final_path.exists() {
-                    std::fs::remove_dir_all(&final_path).map_err(|e| e.to_string())?;
-                }
-                std::fs::rename(extracted_path, final_path).map_err(|e| e.to_string())?;
-            }
-        }
-
-    } else {
-        // Single file download (Whisper)
-        let mut file = std::fs::File::create(&target_path).map_err(|e| e.to_string())?;
-        let mut downloaded: u64 = 0;
-        let mut stream = response.bytes_stream();
-
-        use futures_util::StreamExt;
-        use std::io::Write;
-
-        while let Some(chunk) = stream.next().await {
-            let chunk = chunk.map_err(|e| e.to_string())?;
-            file.write_all(&chunk).map_err(|e| e.to_string())?;
-            downloaded += chunk.len() as u64;
-
-            let progress = if total_size > 0 {
-                (downloaded as f64 / total_size as f64) * 100.0
-            } else {
-                0.0
-            };
-            let _ = app.emit("download-progress", DownloadProgress {
-                model_id: model_id.clone(),
-                progress,
-                downloaded,
-                total: total_size,
-            });
-        }
+        let _ = app.emit("download-progress", DownloadProgress {
+            model_id: model_id.clone(),
+            progress,
+            downloaded,
+            total: total_size,
+        });
     }
 
     Ok("Model başarıyla indirildi".to_string())
@@ -292,15 +192,8 @@ async fn load_model(app: AppHandle, state: State<'_, AppState>, model_id: String
     tokio::task::block_in_place(move || {
         let mut transcriber_guard = state.transcriber.lock().map_err(|e| e.to_string())?;
 
-        if is_whisper_model(&model_id) {
-            let transcriber = WhisperTranscriber::new(&path_str)?;
-            *transcriber_guard = Some(TranscriberModel::Whisper(transcriber));
-        } else if is_parakeet_model(&model_id) {
-            let transcriber = ParakeetTranscriber::new(&path_str)?;
-            *transcriber_guard = Some(TranscriberModel::Parakeet(transcriber));
-        } else {
-            return Err("Bilinmeyen model türü".to_string());
-        }
+        let transcriber = WhisperTranscriber::new(&path_str)?;
+        *transcriber_guard = Some(TranscriberModel::Whisper(transcriber));
 
         *state.current_model.lock().map_err(|e| e.to_string())? = Some(model_id.clone());
 

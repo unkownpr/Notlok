@@ -32,9 +32,6 @@ whisper-rs = "0.13"
 # sherpa-rs = "0.6.8"  # Disabled - causes Swift runtime issues
 reqwest = { version = "0.11", features = ["stream"] }
 futures-util = "0.3"
-tar = "0.4"
-flate2 = "1.0"
-bzip2 = "0.4"
 # ort = "2.0.0-rc.10"  # ONNX Runtime for Parakeet - disabled for now
 # ndarray = "0.15" 
 
