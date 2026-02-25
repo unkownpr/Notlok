@@ -74,8 +74,10 @@ const translations = {
     enterGeminiKey: "Gemini API anahtarınızı girin",
     openrouterApiKey: "OpenRouter API Anahtarı",
     enterOpenRouterKey: "OpenRouter API anahtarınızı girin",
-    openrouterModel: "Model",
-    enterOpenRouterModel: "örn. google/gemini-2.0-flash-001",
+    selectModel: "Model Seç",
+    fetchingModels: "Modeller yükleniyor...",
+    noModelsFound: "Model bulunamadı",
+    enterKeyFirst: "Önce API anahtarı girin",
     customPrompt: "Özel Prompt",
     defaultPrompt: "Bu toplantı transkriptini analiz et ve önemli noktaları, kararları ve aksiyonları özetle:",
     reportResult: "Rapor Sonucu",
@@ -176,8 +178,10 @@ const translations = {
     enterGeminiKey: "Enter your Gemini API key",
     openrouterApiKey: "OpenRouter API Key",
     enterOpenRouterKey: "Enter your OpenRouter API key",
-    openrouterModel: "Model",
-    enterOpenRouterModel: "e.g. google/gemini-2.0-flash-001",
+    selectModel: "Select Model",
+    fetchingModels: "Loading models...",
+    noModelsFound: "No models found",
+    enterKeyFirst: "Enter API key first",
     customPrompt: "Custom Prompt",
     defaultPrompt: "Analyze this meeting transcript and summarize key points, decisions, and action items:",
     reportResult: "Report Result",
@@ -344,9 +348,15 @@ function App() {
   const [openrouterApiKey, setOpenrouterApiKey] = useState(() => {
     return localStorage.getItem("notlok-openrouter-key") || "";
   });
-  const [openrouterModel, setOpenrouterModel] = useState(() => {
-    return localStorage.getItem("notlok-openrouter-model") || "google/gemini-2.0-flash-001";
+  const [openrouterModels, setOpenrouterModels] = useState<{ id: string; name: string }[]>([]);
+  const [selectedOpenrouterModel, setSelectedOpenrouterModel] = useState(() => {
+    return localStorage.getItem("notlok-openrouter-model") || "";
   });
+  const [geminiModels, setGeminiModels] = useState<{ id: string; name: string }[]>([]);
+  const [selectedGeminiModel, setSelectedGeminiModel] = useState(() => {
+    return localStorage.getItem("notlok-gemini-model") || "";
+  });
+  const [isFetchingModels, setIsFetchingModels] = useState(false);
   const [customPrompt, setCustomPrompt] = useState(() => {
     return localStorage.getItem("notlok-custom-prompt") || "";
   });
@@ -454,12 +464,84 @@ function App() {
   }, [openrouterApiKey]);
 
   useEffect(() => {
-    localStorage.setItem("notlok-openrouter-model", openrouterModel);
-  }, [openrouterModel]);
+    localStorage.setItem("notlok-openrouter-model", selectedOpenrouterModel);
+  }, [selectedOpenrouterModel]);
+
+  useEffect(() => {
+    localStorage.setItem("notlok-gemini-model", selectedGeminiModel);
+  }, [selectedGeminiModel]);
 
   useEffect(() => {
     localStorage.setItem("notlok-custom-prompt", customPrompt);
   }, [customPrompt]);
+
+  // Auto-fetch OpenRouter models when API key changes
+  useEffect(() => {
+    if (!openrouterApiKey.trim()) {
+      setOpenrouterModels([]);
+      return;
+    }
+    const timer = setTimeout(async () => {
+      setIsFetchingModels(true);
+      try {
+        const res = await fetch("https://openrouter.ai/api/v1/models", {
+          headers: { "Authorization": `Bearer ${openrouterApiKey.trim()}` },
+        });
+        const data = await res.json();
+        if (data.data && Array.isArray(data.data)) {
+          const models = data.data
+            .filter((m: any) => m.id && m.name)
+            .map((m: any) => ({ id: m.id, name: m.name }))
+            .sort((a: any, b: any) => a.name.localeCompare(b.name));
+          setOpenrouterModels(models);
+          if (!selectedOpenrouterModel && models.length > 0) {
+            const def = models.find((m: any) => m.id.includes("gemini-2.0-flash")) || models[0];
+            setSelectedOpenrouterModel(def.id);
+          }
+        }
+      } catch {
+        setOpenrouterModels([]);
+      } finally {
+        setIsFetchingModels(false);
+      }
+    }, 600);
+    return () => clearTimeout(timer);
+  }, [openrouterApiKey]);
+
+  // Auto-fetch Gemini models when API key changes
+  useEffect(() => {
+    if (!geminiApiKey.trim()) {
+      setGeminiModels([]);
+      return;
+    }
+    const timer = setTimeout(async () => {
+      setIsFetchingModels(true);
+      try {
+        const res = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models?key=${geminiApiKey.trim()}`
+        );
+        const data = await res.json();
+        if (data.models && Array.isArray(data.models)) {
+          const models = data.models
+            .filter((m: any) => m.supportedGenerationMethods?.includes("generateContent"))
+            .map((m: any) => ({
+              id: m.name.replace("models/", ""),
+              name: m.displayName || m.name,
+            }));
+          setGeminiModels(models);
+          if (!selectedGeminiModel && models.length > 0) {
+            const def = models.find((m: any) => m.id.includes("gemini-2.0-flash")) || models[0];
+            setSelectedGeminiModel(def.id);
+          }
+        }
+      } catch {
+        setGeminiModels([]);
+      } finally {
+        setIsFetchingModels(false);
+      }
+    }, 600);
+    return () => clearTimeout(timer);
+  }, [geminiApiKey]);
 
   useEffect(() => {
     localStorage.setItem("notlok-prompt-template", promptTemplate);
@@ -512,8 +594,9 @@ function App() {
           return;
         }
 
+        const geminiModel = selectedGeminiModel || "gemini-2.0-flash";
         const response = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent`,
+          `https://generativelanguage.googleapis.com/v1beta/models/${geminiModel}:generateContent`,
           {
             method: "POST",
             headers: {
@@ -563,7 +646,7 @@ function App() {
             "X-Title": "Notlok",
           },
           body: JSON.stringify({
-            model: openrouterModel || "google/gemini-2.0-flash-001",
+            model: selectedOpenrouterModel || "google/gemini-2.0-flash-001",
             messages: [{ role: "user", content: fullPrompt }],
           }),
         });
@@ -1329,33 +1412,63 @@ function App() {
                   />
                 </div>
                 <div className="setting-group">
-                  <label>{t.openrouterModel}:</label>
-                  <input
-                    type="text"
-                    value={openrouterModel}
-                    onChange={(e) => setOpenrouterModel(e.target.value)}
-                    placeholder={t.enterOpenRouterModel}
-                    className="api-key-input"
-                    style={{ flex: 1 }}
-                    disabled={isGenerating}
-                  />
+                  <label>{t.selectModel}:</label>
+                  {isFetchingModels ? (
+                    <span style={{ opacity: 0.6, fontSize: "0.9rem" }}>{t.fetchingModels}</span>
+                  ) : openrouterModels.length > 0 ? (
+                    <select
+                      value={selectedOpenrouterModel}
+                      onChange={(e) => setSelectedOpenrouterModel(e.target.value)}
+                      disabled={isGenerating}
+                    >
+                      {openrouterModels.map((m) => (
+                        <option key={m.id} value={m.id}>{m.name}</option>
+                      ))}
+                    </select>
+                  ) : (
+                    <span style={{ opacity: 0.5, fontSize: "0.9rem" }}>
+                      {openrouterApiKey.trim() ? t.noModelsFound : t.enterKeyFirst}
+                    </span>
+                  )}
                 </div>
               </>
             )}
 
             {aiProvider === "gemini" && (
-              <div className="setting-group">
-                <label>{t.geminiApiKey}:</label>
-                <input
-                  type="password"
-                  value={geminiApiKey}
-                  onChange={(e) => setGeminiApiKey(e.target.value)}
-                  placeholder={t.enterGeminiKey}
-                  className="api-key-input"
-                  style={{ flex: 1 }}
-                  disabled={isGenerating}
-                />
-              </div>
+              <>
+                <div className="setting-group">
+                  <label>{t.geminiApiKey}:</label>
+                  <input
+                    type="password"
+                    value={geminiApiKey}
+                    onChange={(e) => setGeminiApiKey(e.target.value)}
+                    placeholder={t.enterGeminiKey}
+                    className="api-key-input"
+                    style={{ flex: 1 }}
+                    disabled={isGenerating}
+                  />
+                </div>
+                <div className="setting-group">
+                  <label>{t.selectModel}:</label>
+                  {isFetchingModels ? (
+                    <span style={{ opacity: 0.6, fontSize: "0.9rem" }}>{t.fetchingModels}</span>
+                  ) : geminiModels.length > 0 ? (
+                    <select
+                      value={selectedGeminiModel}
+                      onChange={(e) => setSelectedGeminiModel(e.target.value)}
+                      disabled={isGenerating}
+                    >
+                      {geminiModels.map((m) => (
+                        <option key={m.id} value={m.id}>{m.name}</option>
+                      ))}
+                    </select>
+                  ) : (
+                    <span style={{ opacity: 0.5, fontSize: "0.9rem" }}>
+                      {geminiApiKey.trim() ? t.noModelsFound : t.enterKeyFirst}
+                    </span>
+                  )}
+                </div>
+              </>
             )}
 
             <div className="setting-group">
