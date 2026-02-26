@@ -15,12 +15,13 @@ pub struct AudioStats {
     pub silence: f32,
 }
 
-// FFI declarations for permission checks (macOS)
+// FFI declarations for permission checks and icon (macOS)
 #[cfg(target_os = "macos")]
 extern "C" {
     fn sc_check_screen_recording_permission() -> bool;
     fn sc_request_screen_recording_permission() -> bool;
     fn sc_check_microphone_permission() -> i32;
+    fn sc_set_app_icon(data: *const u8, length: i32);
 }
 
 #[derive(Clone, Serialize)]
@@ -421,6 +422,73 @@ pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
         .manage(app_state)
+        .setup(|app| {
+            #[cfg(target_os = "macos")]
+            {
+                use tauri::menu::{Menu, Submenu, PredefinedMenuItem, AboutMetadata};
+
+                // Set NSApplication icon directly via Swift — most reliable for dev mode
+                const ICON_ICNS: &[u8] = include_bytes!("../icons/icon.icns");
+                unsafe { sc_set_app_icon(ICON_ICNS.as_ptr(), ICON_ICNS.len() as i32) };
+
+                // Also pass icon to AboutMetadata (fallback)
+                let icon = tauri::image::Image::from_bytes(
+                    include_bytes!("../icons/icon.png")
+                ).ok();
+
+                // App menu
+                let about = PredefinedMenuItem::about(
+                    app,
+                    Some("About Notlok"),
+                    Some(AboutMetadata {
+                        name: Some("Notlok".to_string()),
+                        version: Some("2.0.6".to_string()),
+                        copyright: Some("Copyright © 2026 ssilistre".to_string()),
+                        website: Some("https://ssilistre.dev".to_string()),
+                        website_label: Some("ssilistre.dev".to_string()),
+                        icon,
+                        ..Default::default()
+                    }),
+                )?;
+                let sep1 = PredefinedMenuItem::separator(app)?;
+                let services = PredefinedMenuItem::services(app, None)?;
+                let sep2 = PredefinedMenuItem::separator(app)?;
+                let hide = PredefinedMenuItem::hide(app, None)?;
+                let hide_others = PredefinedMenuItem::hide_others(app, None)?;
+                let show_all = PredefinedMenuItem::show_all(app, None)?;
+                let sep3 = PredefinedMenuItem::separator(app)?;
+                let quit = PredefinedMenuItem::quit(app, Some("Quit Notlok"))?;
+                let app_menu = Submenu::with_items(
+                    app, "Notlok", true,
+                    &[&about, &sep1, &services, &sep2, &hide, &hide_others, &show_all, &sep3, &quit],
+                )?;
+
+                // Edit menu
+                let undo = PredefinedMenuItem::undo(app, None)?;
+                let redo = PredefinedMenuItem::redo(app, None)?;
+                let sep4 = PredefinedMenuItem::separator(app)?;
+                let cut = PredefinedMenuItem::cut(app, None)?;
+                let copy = PredefinedMenuItem::copy(app, None)?;
+                let paste = PredefinedMenuItem::paste(app, None)?;
+                let select_all = PredefinedMenuItem::select_all(app, None)?;
+                let edit_menu = Submenu::with_items(
+                    app, "Edit", true,
+                    &[&undo, &redo, &sep4, &cut, &copy, &paste, &select_all],
+                )?;
+
+                // Window menu
+                let minimize = PredefinedMenuItem::minimize(app, None)?;
+                let close = PredefinedMenuItem::close_window(app, None)?;
+                let window_menu = Submenu::with_items(
+                    app, "Window", true,
+                    &[&minimize, &close],
+                )?;
+
+                let menu = Menu::with_items(app, &[&app_menu, &edit_menu, &window_menu])?;
+                app.set_menu(menu)?;
+            }
+            Ok(())
+        })
         .invoke_handler(tauri::generate_handler![
             greet,
             list_audio_input_devices,

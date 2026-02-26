@@ -2,6 +2,17 @@ import Foundation
 import ScreenCaptureKit
 import AVFoundation
 import CoreMedia
+import AppKit
+
+/// Sets NSApplication.shared.applicationIconImage from raw PNG/ICNS bytes.
+/// Must be called from the main thread.
+@_cdecl("sc_set_app_icon")
+public func sc_set_app_icon(_ data: UnsafePointer<UInt8>, _ length: Int32) {
+    let bytes = Data(bytes: data, count: Int(length))
+    if let image = NSImage(data: bytes) {
+        NSApplication.shared.applicationIconImage = image
+    }
+}
 
 // Global state for the capture
 private var captureStream: SCStream?
